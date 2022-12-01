@@ -2,10 +2,16 @@ import express from 'express';
 
 import { signup, login, isAuth } from '../controllers/auth.js';
 
+import { createThing }   from '../controllers/stuff.js';
+
 // ON IMPORT signup, login, isAuth qui sont des constantes dans l'autre page
 
-const router = express.Router();
 
+// création du routeur
+const router = express.Router(); 
+
+router.post('/createThing', createThing);
+// à la place de faire app.post mtn on peut faire router.post
 router.post('/login', login);
 
 router.post('/signup', signup);

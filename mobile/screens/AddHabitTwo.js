@@ -12,7 +12,11 @@ import {
 
 import React, { useCallback, useEffect, useState } from "react";
 
-import { useFonts, Roboto_900Black, Roboto_400Regular } from "@expo-google-fonts/roboto";
+import {
+  useFonts,
+  Roboto_900Black,
+  Roboto_400Regular,
+} from "@expo-google-fonts/roboto";
 
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
@@ -20,8 +24,55 @@ import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
+const API_URL =
+  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
+
 const AddHabitTwo = () => {
+
+  const [title, setTitle] = useState("");
+  const [goals, setGoals] = useState("");
+
+  const [isError, setIsError] = useState(false);
+  const [message, setMessage] = useState("");
+
   const navigation = useNavigation();
+
+  const onSubmitHandler = () => {
+    const payload = {
+      title,
+      goals,
+    };
+    fetch(`${API_URL}/${"createThing"}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then(async (res) => {
+        try {
+          const jsonRes = await res.json();
+          if (res.status !== 200) {
+            setIsError(true);
+            setMessage(jsonRes.message);
+          } else {
+            onLoggedIn(jsonRes.token);
+            setIsError(false);
+            setMessage(jsonRes.message);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  
+  const getMessage = () => {
+    const status = isError ? `Error: ` : `Success: `;
+    return status + message;
+  };
 
   const [fontsLoaded] = useFonts({ Roboto_900Black, Roboto_400Regular });
 
@@ -70,11 +121,19 @@ const AddHabitTwo = () => {
       <View style={styles.body}>
         <Text style={styles.bodyText}>Titre:</Text>
 
-        <TextInput style={styles.textInput}>Courir</TextInput>
+        <TextInput
+          style={styles.textInput}
+          autoCapitalize="none"
+          onChangeText={setTitle}
+        ></TextInput>
 
         <Text style={styles.bodyText}>Objectif:</Text>
         <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
-          <TextInput style={styles.textInput}>3</TextInput>
+          <TextInput
+            style={styles.textInput}
+            autoCapitalize="none"
+            onChangeText={setGoals}
+          ></TextInput>
           <TextInput style={styles.textInput}>KM</TextInput>
           <TextInput style={styles.textInput}>Jours</TextInput>
         </View>
@@ -95,17 +154,20 @@ const AddHabitTwo = () => {
         <TextInput style={styles.textInput}>...</TextInput>
         <Text style={styles.bodyText}>Date fin:</Text>
         <TextInput style={styles.textInput}>...</TextInput>
-
-        
       </View>
 
       <View style={styles.viewValidate}>
-        <TouchableOpacity onPress={() => navigation.navigate("Homepage")}>
+        <TouchableOpacity onPress={onSubmitHandler}>
           <LinearGradient
             colors={["#FF3B01", "#FACA21"]}
             style={styles.buttonValidate}
           >
             <Text style={styles.buttonText}>VALIDER</Text>
+            <Text
+              style={[styles.message, { color: isError ? "red" : "green" }]}
+            >
+              {message ? getMessage() : null}
+            </Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -181,24 +243,17 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
 
-
-
-
   body: {
     padding: "5%",
     flex: 10,
   },
 
-
   bodyText: {
-    
     margin: "2%",
     fontFamily: "Roboto_900Black",
     fontSize: 17,
     color: "black",
-   
   },
-
 
   textInput: {
     backgroundColor: "rgba(0, 0, 0, 0.03)",
@@ -206,26 +261,17 @@ const styles = StyleSheet.create({
 
     width: "33%",
     fontFamily: "Roboto_400Regular",
-    fontSize: 17
+    fontSize: 17,
   },
-
-
-
-
-
-
- 
 
   viewValidate: {
     flex: 1,
     padding: "5%",
 
     justifyContent: "center",
-    
   },
 
   buttonValidate: {
-    
     borderRadius: 4,
     paddingVertical: 10,
     paddingHorizontal: 12,
@@ -238,11 +284,9 @@ const styles = StyleSheet.create({
     color: "white",
 
     alignSelf: "center",
-
   },
 
   footer: {
-    
     padding: "2%",
     justifyContent: "space-between",
     flexDirection: "row",

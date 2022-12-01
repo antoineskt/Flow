@@ -9,4 +9,4 @@ try {   sequelize.authenticate();   console.log('Connecté à la base de donnée
 
 export default sequelize;
 
-// CONNECTION A LA DATABASE MYSQL AVEC SEQUILIZE 
+// CONNECTION A LA DATABASE MYSQL AVEC SEQUELIZE 

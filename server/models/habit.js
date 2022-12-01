@@ -4,23 +4,20 @@ import sequelize from "../utils/database.js";
 
 // Creation du modèle de donnée pour User
 
-const User = sequelize.define(
-  "users",
+const Habit = sequelize.define(
+  "habit",
   {
-    id: {
+    userId: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       allowNull: false,
       primaryKey: true,
     },
-    email: {
+    title: {
       type: Sequelize.STRING,
       allowNull: false,
     },
-    name: {
-      type: Sequelize.STRING,
-    },
-    password: {
+    goals: {
       type: Sequelize.STRING,
       allowNull: false,
     },
@@ -46,4 +43,4 @@ sequelize
     console.error("Unable to create table : ", error);
   });
 
-export default User;
+export default Habit;
