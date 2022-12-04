@@ -23,6 +23,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import IconPicker from "react-native-icon-picker";
 
 const API_URL =
   Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
@@ -31,6 +32,8 @@ const AddHabitTwo = () => {
 
   const [title, setTitle] = useState("");
   const [goals, setGoals] = useState("");
+
+  const [showIconPicker, setShowIconPicker] = useState(false);
 
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
@@ -80,8 +83,15 @@ const AddHabitTwo = () => {
     return null;
   }
 
+ 
+
+  const onSelect = (icon) => {
+    setShowIconPicker(false);
+  };
+
   return (
     <View style={styles.container}>
+      
       <View style={styles.header}>
         <Icon.Button
           name="user-plus"
@@ -149,12 +159,64 @@ const AddHabitTwo = () => {
 
         <TextInput style={styles.textInput}>17h35</TextInput>
 
+        <Text style={styles.bodyText}>Icone:</Text>
+        <IconPicker
+        showIconPicker={showIconPicker}
+        toggleIconPicker={() => setShowIconPicker(!showIconPicker)}
+        iconDetails={[
+          {
+            family: "AntDesign",
+            color: "blue",
+            icons: [
+              "wallet",
+              "user",
+              "addusergroup",
+              "deleteuser",
+              "deleteusergroup",
+              "adduser",
+            ],
+          },
+          { family: "Entypo", icons: ["wallet"] },
+          { family: "FontAwesome", icons: ["google-wallet"] },
+          {
+            family: "FontAwesome5",
+            icons: [
+              "wallet",
+              "hospital-user",
+              "house-user",
+              "user-alt-slash",
+              "user-cog",
+              "user-md",
+              "user-tag",
+              "user-slash",
+            ],
+          },
+          { family: "Fontisto", icons: ["wallet"] },
+          {
+            family: "MaterialCommunityIcons",
+            icons: ["wallet-membership"],
+          },
+          {
+            family: "MaterialIcons",
+            icons: ["wallet-travel", "supervised-user-circle", "verified-user"],
+          },
+        ]}
+        content={<Text style={[styles.textBox]}>Clique pour choisir ton icone</Text>}
+        onSelect={onSelect}
+      />
+          
+        
+
+
+       
+      </View>
+       {/* <View style={{justifyContent: "space-between", flexDirection: "row" }}>
         <Text style={styles.bodyText}>Date début:</Text>
 
         <TextInput style={styles.textInput}>...</TextInput>
         <Text style={styles.bodyText}>Date fin:</Text>
         <TextInput style={styles.textInput}>...</TextInput>
-      </View>
+        </View> */}
 
       <View style={styles.viewValidate}>
         <TouchableOpacity onPress={onSubmitHandler}>
@@ -264,6 +326,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
 
+  image: {
+    justifyContent: "center",
+    
+
+  },
+
   viewValidate: {
     flex: 1,
     padding: "5%",
@@ -275,6 +343,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingVertical: 10,
     paddingHorizontal: 12,
+   
   },
 
   buttonText: {
@@ -284,6 +353,7 @@ const styles = StyleSheet.create({
     color: "white",
 
     alignSelf: "center",
+   
   },
 
   footer: {
