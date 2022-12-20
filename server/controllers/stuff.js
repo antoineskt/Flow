@@ -1,12 +1,12 @@
 import Habit from "../models/habit.js"; //majuscule ou PAS ???
 
 const createThing = (req, res, next) => {
-  const habit = new Habit({
+  const thing = new Habit({
     title: req.body.title,
     goals: req.body.goals,
     userId: req.body.userId,
   });
-  habit
+  thing
     .save()
     .then(() => {
       res.status(201).json({
