@@ -1,30 +1,30 @@
-import  Habit  from '../models/habit.js'; //majuscule ou PAS ???
-
-
+import Habit from "../models/habit.js"; //majuscule ou PAS ???
 
 const createThing = (req, res, next) => {
-    const thing = new Habit({
-      title: req.body.title,
-      goals: req.body.goals,
-      userId: req.body.userId
+  const habit = new Habit({
+    title: req.body.title,
+    goals: req.body.goals,
+    userId: req.body.userId,
+  });
+  habit
+    .save()
+    .then(() => {
+      res.status(201).json({
+        message: "Post enregistré avec succès",
+      });
+    })
+    .catch((error) => {
+      res.status(400).json({
+        error: error,
+      });
     });
-    thing.save().then(
-      () => {
-        res.status(201).json({
-          message: 'Post saved successfully!'
-        });
-      }
-    ).catch(
-      (error) => {
-        res.status(400).json({
-          error: error
-        });
-      }
-    );
-  };
-  
-  export { createThing } ; 
- 
+}; 
 
+const showHabit = (req, res, next) => {
+  Habit.findOne({userId: req.params.id})
+    
+    .then((habit) => res.status(200).json(habit), console.log("coucou", habit))
+    .catch((error) => res.status(404).json({ error }));
+};
 
-
+export { createThing, showHabit };

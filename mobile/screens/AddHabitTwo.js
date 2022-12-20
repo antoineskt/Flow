@@ -8,6 +8,7 @@ import {
   TextInput,
   Platform,
   Button,
+  FlatList
 } from "react-native";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -29,16 +30,17 @@ const API_URL =
   Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
 
 const AddHabitTwo = () => {
-
   const [title, setTitle] = useState("");
   const [goals, setGoals] = useState("");
 
-  const [showIconPicker, setShowIconPicker] = useState(false);
+  
 
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
 
   const navigation = useNavigation();
+
+
 
   const onSubmitHandler = () => {
     const payload = {
@@ -59,7 +61,8 @@ const AddHabitTwo = () => {
             setIsError(true);
             setMessage(jsonRes.message);
           } else {
-            onLoggedIn(jsonRes.token);
+            showHabit()
+            console.log("showhabit ok")
             setIsError(false);
             setMessage(jsonRes.message);
           }
@@ -71,7 +74,32 @@ const AddHabitTwo = () => {
         console.log(err);
       });
   };
-  
+
+  const showHabit = () => {
+    fetch(`${API_URL}/showHabit`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        
+      },
+    })
+      .then(async (res) => {
+        try {
+          const jsonRes = await res.json();
+          if (res.status === 200) {
+            setMessage(jsonRes.message);
+            console.log("FINAL Réussi ")
+          }
+        } catch (err) {
+          console.log(err);
+        } 
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+
   const getMessage = () => {
     const status = isError ? `Error: ` : `Success: `;
     return status + message;
@@ -83,15 +111,14 @@ const AddHabitTwo = () => {
     return null;
   }
 
- 
-
-  const onSelect = (icon) => {
-    setShowIconPicker(false);
+  const test = () => {
+    console.log("test réussi")
   };
+
+
 
   return (
     <View style={styles.container}>
-      
       <View style={styles.header}>
         <Icon.Button
           name="user-plus"
@@ -160,57 +187,33 @@ const AddHabitTwo = () => {
         <TextInput style={styles.textInput}>17h35</TextInput>
 
         <Text style={styles.bodyText}>Icone:</Text>
-        <IconPicker
-        showIconPicker={showIconPicker}
-        toggleIconPicker={() => setShowIconPicker(!showIconPicker)}
-        iconDetails={[
-          {
-            family: "AntDesign",
-            color: "blue",
-            icons: [
-              "wallet",
-              "user",
-              "addusergroup",
-              "deleteuser",
-              "deleteusergroup",
-              "adduser",
-            ],
-          },
-          { family: "Entypo", icons: ["wallet"] },
-          { family: "FontAwesome", icons: ["google-wallet"] },
-          {
-            family: "FontAwesome5",
-            icons: [
-              "wallet",
-              "hospital-user",
-              "house-user",
-              "user-alt-slash",
-              "user-cog",
-              "user-md",
-              "user-tag",
-              "user-slash",
-            ],
-          },
-          { family: "Fontisto", icons: ["wallet"] },
-          {
-            family: "MaterialCommunityIcons",
-            icons: ["wallet-membership"],
-          },
-          {
-            family: "MaterialIcons",
-            icons: ["wallet-travel", "supervised-user-circle", "verified-user"],
-          },
-        ]}
-        content={<Text style={[styles.textBox]}>Clique pour choisir ton icone</Text>}
-        onSelect={onSelect}
-      />
-          
         
 
+        <View>
+        <FontAwesome5.Button
+              name="walking"
+              color={"black"}
+              backgroundColor={"transparent"}
+              onPress={() => navigation.navigate("AddHabitTwo")}
+            />
 
-       
+            <FontAwesome5.Button
+              name="running"
+              color={"black"}
+              backgroundColor={"transparent"}
+              onPress={() => navigation.navigate("AddHabitTwo")}
+            />
+            
+            
+        </View>
+
+        <View >
+          
+        </View>
+        
+        
       </View>
-       {/* <View style={{justifyContent: "space-between", flexDirection: "row" }}>
+      {/* <View style={{justifyContent: "space-between", flexDirection: "row" }}>
         <Text style={styles.bodyText}>Date début:</Text>
 
         <TextInput style={styles.textInput}>...</TextInput>
@@ -318,7 +321,7 @@ const styles = StyleSheet.create({
   },
 
   textInput: {
-    backgroundColor: "rgba(0, 0, 0, 0.03)",
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
     margin: "2%",
 
     width: "33%",
@@ -326,10 +329,21 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
 
+  iconInput: {
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    margin: "2%",
+
+    width: "6%",
+    fontFamily: "Roboto_400Regular",
+    fontSize: 17,
+    textAlign: "center",
+    borderRadius: 100,
+  },
+
+
+
   image: {
     justifyContent: "center",
-    
-
   },
 
   viewValidate: {
@@ -343,7 +357,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingVertical: 10,
     paddingHorizontal: 12,
-   
   },
 
   buttonText: {
@@ -353,7 +366,6 @@ const styles = StyleSheet.create({
     color: "white",
 
     alignSelf: "center",
-   
   },
 
   footer: {

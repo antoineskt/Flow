@@ -1,8 +1,8 @@
 import React from "react";
 import { View, StyleSheet, Text, Pressable } from "react-native";
-/**
- * Override styles that get passed from props
- **/
+
+
+
 
 const CircularProgress = () => {
   return (
@@ -21,7 +21,7 @@ const CircularProgress = () => {
           alignItems: "center",
         })}
       >
-        <Text>Workout & Logo</Text>
+      
       </Pressable>
     </View>
   );

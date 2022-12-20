@@ -25,7 +25,38 @@ import { TapGestureHandler, State } from "react-native-gesture-handler";
 import Animated, { Value, cond, eq } from "react-native-reanimated";
 import { mix, onGestureEvent, withTransition } from "react-native-redash";
 
+const API_URL =
+  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
+
 const HomePage = () => {
+  const [habits, setHabits] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_URL}/showHabit`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(async (res) => {
+        try {
+          const jsonRes = await res.json();
+          if (res.status === 200) {
+            setHabits(jsonRes.data);
+
+            console.log("Tableau d'objet réussi ")
+            console.log(jsonRes.data)
+            
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      }); 
+  }, []);
+
   const navigation = useNavigation();
 
   const [fontsLoaded] = useFonts({ Roboto_900Black });
@@ -37,7 +68,7 @@ const HomePage = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-      <Icon.Button
+        <Icon.Button
           name="user-plus"
           color={"black"}
           backgroundColor={"transparent"}
@@ -67,7 +98,20 @@ const HomePage = () => {
 
       <View style={styles.body}>
         <View>
-          <CircularProgress />
+          {console.log(habits, "2")}
+          {
+            habits.map((habit) => console.log("hi bonjour dhqsdhqsjfhq", habit))}
+        </View>
+
+        <View>
+          <Button
+            title="clique"
+            style={{ width: 100 }}
+            onPress={  
+             habits.map((habit) => console.log("hi bonjour dhqsdhqsjfhq"))
+            }
+          ></Button> 
+          
         </View>
 
         <View>
@@ -130,16 +174,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     width: "100%",
     height: "100%",
-    
   },
 
   header: {
     width: "100%",
     flexDirection: "row",
-    
+
     paddingTop: "5%",
     justifyContent: "space-between",
-    
   },
 
   iconRight: {
@@ -150,8 +192,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "yellow"
-
+    backgroundColor: "yellow",
   },
 
   inscription: {
@@ -159,7 +200,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "black",
     textTransform: "uppercase",
-    
+
     alignSelf: "center",
   },
 
