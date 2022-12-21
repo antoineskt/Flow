@@ -21,9 +21,10 @@ const createThing = (req, res, next) => {
 }; 
 
 const showHabit = (req, res, next) => {
-  Habit.findOne({userId: req.params.id})
+  Habit.findOne({where : {userId: req.params.id}})
     
-    .then((habit) => res.status(200).json(habit), console.log("coucou", habit))
+    .then((habit) => res.status(200).json(habit))
+   
     .catch((error) => res.status(404).json({ error }));
 };
 

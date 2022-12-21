@@ -36,7 +36,7 @@ sequelize
     console.log("User sequelize table created successfully!");
     User.findAll()
       .then((res) => {
-        console.log(res);
+        console.log("res");
       })
       .catch((error) => {
         console.error("Failed to retrieve data : ", error);

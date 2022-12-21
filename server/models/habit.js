@@ -30,10 +30,10 @@ const Habit = sequelize.define(
 sequelize
   .sync()
   .then(() => {
-    console.log("User sequelize table created successfully!");
-    User.findAll()
+    console.log("Habit sequelize table created successfully!");
+    Habit.findAll()
       .then((res) => {
-        console.log(res);
+        console.log("res");
       })
       .catch((error) => {
         console.error("Failed to retrieve data : ", error);

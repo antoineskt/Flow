@@ -32,7 +32,7 @@ const HomePage = () => {
   const [habits, setHabits] = useState([]);
 
   useEffect(() => {
-    fetch(`${API_URL}/showHabit`, {
+    fetch(`${API_URL}/${'showHabit/2'}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -44,10 +44,10 @@ const HomePage = () => {
           if (res.status === 200) {
             setHabits(jsonRes.data);
 
-            console.log("Tableau d'objet réussi ")
+            console.log("Tableau d'objet réussi ") 
             console.log(jsonRes.data)
-            
-          }
+             
+          } 
         } catch (err) {
           console.log(err);
         }
@@ -98,19 +98,20 @@ const HomePage = () => {
 
       <View style={styles.body}>
         <View>
-          {console.log(habits, "2")}
+          {console.log(habits)}
+          {console.log("deuxième")}
           {
-            habits.map((habit) => console.log("hi bonjour dhqsdhqsjfhq", habit))}
+            habits.map((habit) => console.log(habit))}
         </View>
 
         <View>
-          <Button
+          {/* <Button
             title="clique"
             style={{ width: 100 }}
             onPress={  
              habits.map((habit) => console.log("hi bonjour dhqsdhqsjfhq"))
             }
-          ></Button> 
+          ></Button>  */}
           
         </View>
 

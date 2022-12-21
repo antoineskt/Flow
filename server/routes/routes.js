@@ -18,15 +18,15 @@ router.post('/signup', signup);
 
 router.get('/private', isAuth);
 
-router.get('/showHabit', showHabit)
+router.get('/showHabit/:id', showHabit)
 
 router.get('/public', (req, res, next) => {
     res.status(200).json({ message: "CECI EST PUBLIC J AI ENIN TROUVE" });
 });
 
 // will match any other path
-router.use('/', (req, res, next) => {
-    res.status(404).json({error : "ici je peux ecrire un autre chemin pour une autre page"});
-});
+// router.use('/', (req, res, next) => {
+//     res.status(404).json({error : "ici je peux ecrire un autre chemin pour une autre page"});
+// });
 
 export default router;
