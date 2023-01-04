@@ -2,7 +2,7 @@ import express from 'express';
 
 import { signup, login, isAuth } from '../controllers/auth.js';
 
-import { createThing, showHabit }   from '../controllers/stuff.js';
+import { createThing, showAllHabits, showHabit }   from '../controllers/stuff.js';
 
 // ON IMPORT signup, login, isAuth qui sont des constantes dans l'autre page
 
@@ -18,7 +18,9 @@ router.post('/signup', signup);
 
 router.get('/private', isAuth);
 
-router.get('/showHabit/:id', showHabit)
+router.get('/showHabit/:id', showHabit);
+
+router.get('/showAllHabits', showAllHabits);
 
 router.get('/public', (req, res, next) => {
     res.status(200).json({ message: "CECI EST PUBLIC J AI ENIN TROUVE" });

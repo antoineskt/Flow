@@ -8,6 +8,8 @@ import {
   TextInput,
   Platform,
   Button,
+  FlatList,
+  ActivityIndicator
 } from "react-native";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -26,35 +28,45 @@ import Animated, { Value, cond, eq } from "react-native-reanimated";
 import { mix, onGestureEvent, withTransition } from "react-native-redash";
 
 const API_URL =
-  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
+  Platform.OS === "ios" ? "http://192.168.1.42:5000" : "http://10.0.2.2:5000";
 
 const HomePage = () => {
-  const [habits, setHabits] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+
+  const HAKI = [
+    {
+      id: 1,
+      title: "roumain",
+      goals: "sept"
+    },
+    {
+      id: 2,
+      title: "belge",
+      goals: "neuf"
+    },
+
+  ];
+
+  const getHabits = async () => {
+    try {
+      const response = await fetch(`http://192.168.1.42:5000/showAllHabits`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const json = await response.json();
+      setData (json)
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetch(`${API_URL}/${'showHabit/2'}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then(async (res) => {
-        try {
-          const jsonRes = await res.json();
-          if (res.status === 200) {
-            setHabits(jsonRes.data);
-
-            console.log("Tableau d'objet réussi ") 
-            console.log(jsonRes.data)
-             
-          } 
-        } catch (err) {
-          console.log(err);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      }); 
+    getHabits();
   }, []);
 
   const navigation = useNavigation();
@@ -97,39 +109,43 @@ const HomePage = () => {
       </View>
 
       <View style={styles.body}>
-        <View>
-          {console.log(habits)}
-          {console.log("deuxième")}
-          {
-            habits.map((habit) => console.log(habit))}
-        </View>
-
-        <View>
-          {/* <Button
-            title="clique"
-            style={{ width: 100 }}
-            onPress={  
-             habits.map((habit) => console.log("hi bonjour dhqsdhqsjfhq"))
-            }
-          ></Button>  */}
+        <View style={{ flex: 10, padding: 24, backgroundColor:"red"}}>
+          
+            <FlatList 
+              data={data}
+              
+              renderItem={({ item }) => (
+                <Text>
+                  {item.title}, {item.goals} 
+              
+                </Text>
+              )}
+            />
           
         </View>
+        
 
+        
+        <View>
+          <CircularProgress />
+        </View>
+        <Button title = "get all habits" onPress={getHabits}/>
         <View>
           <CircularProgress />
         </View>
 
-        <View>
-          <CircularProgress />
-        </View>
+        <FlatList
+        data={HAKI}
+        
 
-        <View>
-          <CircularProgress />
-        </View>
-
-        <View>
-          <CircularProgress />
-        </View>
+        renderItem={({ item }) => (
+          <Text>
+            {item.title}, {item.goals} 
+        
+          </Text>
+        )}
+       
+      />
       </View>
 
       <View style={styles.footer}>

@@ -17,7 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
 const API_URL =
-  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
+  Platform.OS === "ios" ? "http://192.168.1.42:5000" : "http://10.0.2.2:5000";
 
 const Login = () => {
   

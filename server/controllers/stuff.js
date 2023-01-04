@@ -26,6 +26,16 @@ const showHabit = (req, res, next) => {
     .then((habit) => res.status(200).json(habit))
    
     .catch((error) => res.status(404).json({ error }));
+
 };
 
-export { createThing, showHabit };
+const showAllHabits = (req, res, next) => {
+Habit.findAll()
+
+  .then((habit) => res.status(200).json(habit))
+
+  .catch((error) => res.status(404).json({ error })); 
+
+};
+
+export { createThing, showHabit, showAllHabits };
