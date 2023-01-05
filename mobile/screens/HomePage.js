@@ -34,19 +34,7 @@ const HomePage = () => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
-  const HAKI = [
-    {
-      id: 1,
-      title: "roumain",
-      goals: "sept"
-    },
-    {
-      id: 2,
-      title: "belge",
-      goals: "neuf"
-    },
 
-  ];
 
   const getHabits = async () => {
     try {
@@ -109,7 +97,7 @@ const HomePage = () => {
       </View>
 
       <View style={styles.body}>
-        <View style={{ flex: 10, padding: 24, backgroundColor:"red"}}>
+        <View style={{ flex: 10, padding: 24}}>
           
             <FlatList 
               data={data}
@@ -117,7 +105,6 @@ const HomePage = () => {
               renderItem={({ item }) => (
                 <Text>
                   {item.title}, {item.goals} 
-              
                 </Text>
               )}
             />
@@ -134,18 +121,6 @@ const HomePage = () => {
           <CircularProgress />
         </View>
 
-        <FlatList
-        data={HAKI}
-        
-
-        renderItem={({ item }) => (
-          <Text>
-            {item.title}, {item.goals} 
-        
-          </Text>
-        )}
-       
-      />
       </View>
 
       <View style={styles.footer}>
