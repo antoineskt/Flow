@@ -2,12 +2,15 @@ import { Sequelize } from "sequelize";
 
 import sequelize from "../utils/database.js";
 
+import User from '../models/user.js';
+
+
 // Creation du modèle de donnée pour User
 
 const Habit = sequelize.define(
   "habit",
   {
-    userId: {
+    habitId: {
       type: Sequelize.INTEGER,
       autoIncrement: true,
       allowNull: false,
@@ -21,24 +24,24 @@ const Habit = sequelize.define(
       type: Sequelize.STRING,
       allowNull: false,
     },
+    
+    
   },
   {
     timestamps: false,
   }
 );
 
+
+
+
 sequelize
   .sync()
   .then(() => {
     console.log("Habit sequelize table created successfully!");
-    Habit.findAll()
-      .then((res) => {
-        console.log("res");
-      })
-      .catch((error) => {
-        console.error("Failed to retrieve data : ", error);
-      });
+    
   })
+  
   .catch((error) => {
     console.error("Unable to create table : ", error);
   });

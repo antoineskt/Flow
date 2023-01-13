@@ -18,7 +18,7 @@ const signup = (req, res, next) => {
                 if (err) {
                     return res.status(500).json({message: "couldnt hash the password"}); 
                 } else if (passwordHash) {
-                    return User.create(({               // BUG ICI ? 
+                    return User.create(({               
                         email: req.body.email,
                         name: req.body.name,
                         password: passwordHash,
@@ -56,8 +56,12 @@ const login = (req, res, next) => {
             bcrypt.compare(req.body.password, dbUser.password, (err, compareRes) => {
                 if (err) { // error while comparing
                     res.status(502).json({message: "error while checking user password"});
-                } else if (compareRes) { // password match
-                    const token = jwt.sign({ email: req.body.email }, 'secret', { expiresIn: '1h' });
+
+                } else if (compareRes) { // password match -> Creation du TOKEN 
+
+                    const token = jwt.sign({ email: req.body.email }, 'secret', { noTimestamp:true, expiresIn: '1h' });
+
+                    // envoi du TOKEN en result 
                     res.status(200).json({message: "user logged in", "token": token});
                 } else { // password doesnt match
                     res.status(401).json({message: "invalid credentials"});
@@ -71,14 +75,19 @@ const login = (req, res, next) => {
 };
 
 const isAuth = (req, res, next) => {
+    //récupération du token
     const authHeader = req.get("Authorization");
     if (!authHeader) {
         return res.status(401).json({ message: 'not authenticated' });
     };
     const token = authHeader.split(' ')[1];
     let decodedToken; 
+
+    //vérification du token
     try {
         decodedToken = jwt.verify(token, 'secret');
+        var userId = decodedToken.id
+        console.log(decodedToken);
     } catch (err) {
         return res.status(500).json({ message: err.message || 'could not decode the token' });
     };
@@ -87,6 +96,11 @@ const isAuth = (req, res, next) => {
     } else {
         res.status(200).json({ message: 'here is your resource' });
     };
+    res.locals.email = decodedToken?.email;
+    console.log(res.locals.email);
+
+    next();
 };
 
-export { signup, login, isAuth };
+
+export { signup, login, isAuth};

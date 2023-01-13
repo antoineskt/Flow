@@ -8,7 +8,7 @@ import {
   TextInput,
   Platform,
   Button,
-  FlatList
+  FlatList,
 } from "react-native";
 
 import React, { useCallback, useEffect, useState } from "react";
@@ -25,6 +25,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import IconPicker from "react-native-icon-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_URL =
   Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
@@ -33,77 +34,10 @@ const AddHabitTwo = () => {
   const [title, setTitle] = useState("");
   const [goals, setGoals] = useState("");
 
-  
-
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
 
   const navigation = useNavigation();
-
-
-
-  const onSubmitHandler = () => {
-    const payload = {
-      title,
-      goals,
-    };
-    fetch(`${API_URL}/${"createThing"}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then(async (res) => {
-        try {
-          const jsonRes = await res.json();
-          if (res.status !== 200) {
-            setIsError(true);
-            setMessage(jsonRes.message);
-          } else {
-            showHabit()
-            console.log("showhabit ok")
-            setIsError(false);
-            setMessage(jsonRes.message);
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const showHabit = () => {
-    fetch(`${API_URL}/showHabit`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        
-      },
-    })
-      .then(async (res) => {
-        try {
-          const jsonRes = await res.json();
-          if (res.status === 200) {
-            setMessage(jsonRes.message);
-            console.log("FINAL Réussi ")
-          }
-        } catch (err) {
-          console.log(err);
-        } 
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-
-  const getMessage = () => {
-    const status = isError ? `Error: ` : `Success: `;
-    return status + message;
-  };
 
   const [fontsLoaded] = useFonts({ Roboto_900Black, Roboto_400Regular });
 
@@ -111,11 +45,80 @@ const AddHabitTwo = () => {
     return null;
   }
 
-  const test = () => {
-    console.log("test réussi")
-  };
+  
+    const saveData = async () => {
+      try {
+        await AsyncStorage.setItem(
+          "@workout_key",
+          JSON.stringify({ title: title, goals: goals })
+        );
+      } catch (e) {
+        // saving error
+        console.log(e);
+      }
+      const currentUser = await AsyncStorage.getItem('@workout_key')
+      console.log("done")
+      console.log(currentUser)
+    };
+    
 
+  // const onSubmitHandler = () => {
+  //   const payload = {
+  //     title,
+  //     goals,
+  //   };
+  //   fetch(`${API_URL}/${"createThing"}`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(payload),
+  //   })
+  //     .then(async (res) => {
+  //       try {
+  //         const jsonRes = await res.json();
+  //         if (res.status !== 200) {
+  //           setIsError(true);
+  //           setMessage(jsonRes.message);
+  //         }
+  //         else (console.log("Requete post bien envoyé"))
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
 
+  // const showHabit = () => {
+  //   fetch(`${API_URL}/showHabit`, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+
+  //     },
+  //   })
+  //     .then(async (res) => {
+  //       try {
+  //         const jsonRes = await res.json();
+  //         if (res.status === 200) {
+  //           setMessage(jsonRes.message);
+  //           console.log("FINAL Réussi ")
+  //         }
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+
+  // const getMessage = () => {
+  //   const status = isError ? `Error: ` : `Success: `;
+  //   return status + message;
+  // };
 
   return (
     <View style={styles.container}>
@@ -187,42 +190,28 @@ const AddHabitTwo = () => {
         <TextInput style={styles.textInput}>17h35</TextInput>
 
         <Text style={styles.bodyText}>Icone:</Text>
-        
 
         <View>
-        <FontAwesome5.Button
-              name="walking"
-              color={"black"}
-              backgroundColor={"transparent"}
-              onPress={() => navigation.navigate("AddHabitTwo")}
-            />
+          <FontAwesome5.Button
+            name="walking"
+            color={"black"}
+            backgroundColor={"transparent"}
+            onPress={() => navigation.navigate("AddHabitTwo")}
+          />
 
-            <FontAwesome5.Button
-              name="running"
-              color={"black"}
-              backgroundColor={"transparent"}
-              onPress={() => navigation.navigate("AddHabitTwo")}
-            />
-            
-            
+          <FontAwesome5.Button
+            name="running"
+            color={"black"}
+            backgroundColor={"transparent"}
+            onPress={() => navigation.navigate("AddHabitTwo")}
+          />
         </View>
 
-        <View >
-          
-        </View>
-        
-        
+        <View></View>
       </View>
-      {/* <View style={{justifyContent: "space-between", flexDirection: "row" }}>
-        <Text style={styles.bodyText}>Date début:</Text>
-
-        <TextInput style={styles.textInput}>...</TextInput>
-        <Text style={styles.bodyText}>Date fin:</Text>
-        <TextInput style={styles.textInput}>...</TextInput>
-        </View> */}
 
       <View style={styles.viewValidate}>
-        <TouchableOpacity onPress={onSubmitHandler}>
+        <TouchableOpacity onPress={saveData}>
           <LinearGradient
             colors={["#FF3B01", "#FACA21"]}
             style={styles.buttonValidate}
@@ -231,7 +220,7 @@ const AddHabitTwo = () => {
             <Text
               style={[styles.message, { color: isError ? "red" : "green" }]}
             >
-              {message ? getMessage() : null}
+              {/* {message ? getMessage() : null} */}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -339,8 +328,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     borderRadius: 100,
   },
-
-
 
   image: {
     justifyContent: "center",

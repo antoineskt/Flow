@@ -2,6 +2,8 @@ import { Sequelize } from "sequelize";
 
 import sequelize from "../utils/database.js";
 
+import Habit from '../models/habit.js';
+
 // Creation du modèle de donnée pour User
 
 const User = sequelize.define(
@@ -30,18 +32,27 @@ const User = sequelize.define(
   }
 );
 
+User.hasMany(Habit, {
+  foreignKey: 'userId'
+});
+Habit.belongsTo(User);
+
+
+
 sequelize
-  .sync()
+  .sync({})
   .then(() => {
     console.log("User sequelize table created successfully!");
-    User.findAll()
-      .then((res) => {
-        console.log("res");
-      })
-      .catch((error) => {
-        console.error("Failed to retrieve data : ", error);
-      });
+   
   })
+  // .then((data) => {
+  //   Habit.findAll({
+  //     where :{
+  //       id: 10
+  //     }
+  //   });
+  //   console.log(data)
+  // })
   .catch((error) => {
     console.error("Unable to create table : ", error);
   });

@@ -1,8 +1,8 @@
 import express from 'express';
 
-import { signup, login, isAuth } from '../controllers/auth.js';
+import { signup, login, isAuth} from '../controllers/auth.js';
 
-import { createThing, showAllHabits, showHabit }   from '../controllers/stuff.js';
+import { createThing, showHabit, showAllHabits, getCurrentId, testLocal}   from '../controllers/stuff.js';
 
 // ON IMPORT signup, login, isAuth qui sont des constantes dans l'autre page
 
@@ -19,11 +19,16 @@ router.post('/signup', signup);
 router.get('/private', isAuth);
 
 router.get('/showHabit/:id', showHabit);
+// à test ici avec http://localhost:5000/showHabit/1 qui renvoit les infos de l'id 1 
 
 router.get('/showAllHabits', showAllHabits);
 
+router.get('/getCurrentId', getCurrentId);
+
+router.get('/testLocal', testLocal);
+
 router.get('/public', (req, res, next) => {
-    res.status(200).json({ message: "CECI EST PUBLIC J AI ENIN TROUVE" });
+    res.status(200).json({ message: "test postman au http://localhost:5000  " });
 });
 
 // will match any other path

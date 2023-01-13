@@ -9,10 +9,10 @@ import {
   Platform,
   Button,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useParams } from "react";
 
 import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto";
 
@@ -26,36 +26,101 @@ import CircularProgress from "./components/CircularProgress";
 import { TapGestureHandler, State } from "react-native-gesture-handler";
 import Animated, { Value, cond, eq } from "react-native-reanimated";
 import { mix, onGestureEvent, withTransition } from "react-native-redash";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_URL =
-  Platform.OS === "ios" ? "http://192.168.1.42:5000" : "http://10.0.2.2:5000";
+  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
 
 const HomePage = () => {
   const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const [title, setTitle] = useState("");
+  const [goals, setGoals] = useState("");
 
+  const [habit, setHabit] = useState([]);
+  const [currentId, setCurrentId] = useState([]);
 
+  // const getAllHabits = async () => {
+  //   try {
+  //     const response = await fetch(`${API_URL}/${"showAllHabits"}`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     const json = await response.json();
+  //     // ici le bug était que c'était (json.habit), habit étant le nom de la bd mais qui s'affiche pas ds la requete
+  //     setData(json);
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const getHabits = async () => {
-    try {
-      const response = await fetch(`http://192.168.1.42:5000/showAllHabits`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const json = await response.json();
-      setData (json)
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // useEffect(() => {
+  //   getAllHabits();
+  // }, []);
 
+  // const getCurrentId = async () => {
+  //   try {
+  //     const response = await fetch(`${API_URL}/${"getCurrentId"}`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     const json = await response.json();
+  //     // ici le bug était que c'était (json.habit), habit étant le nom de la bd mais qui s'affiche pas ds la requete
+  //     setCurrentId(json);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getCurrentId();
+  // }, []);
   useEffect(() => {
-    getHabits();
+    const getData = async () => {
+      try {
+        const value = await AsyncStorage.getItem('@workout_key');
+        if (value !== null) {
+          const data = JSON.parse(value);
+          setTitle(data.title);
+          setGoals(data.goals);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getData();
   }, []);
+
+  // const getHabitById = async () => {
+  //   try {
+  //     const response = await fetch(`${API_URL}/${'showHabit'}`, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         id: 1,
+  //       }),
+  //     });
+  //     const json = await response.json();
+  //     // ici le bug était que c'était (json.habit), habit étant le nom de la bd mais qui s'affiche pas ds la requete
+  //     setHabit(json);
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoading(false);
+
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getHabitById();
+  // }, []);
 
   const navigation = useNavigation();
 
@@ -97,30 +162,51 @@ const HomePage = () => {
       </View>
 
       <View style={styles.body}>
-        <View style={{ flex: 10, padding: 24}}>
-          
-            <FlatList 
-              data={data}
-              
-              renderItem={({ item }) => (
-                <Text>
-                  {item.title}, {item.goals} 
-                </Text>
-              )}
-            />
-          
+        <View style={{ flex: 10, padding: 24, backgroundColor: "grey" }}>
+          <Text>Title: {title}</Text>
+          <Text>Goals: {goals}</Text>
         </View>
-        
+        {/* <View style={{ flex: 10, padding: 24, backgroundColor: "grey" }}>
+          <FlatList
+            data={data}
+            renderItem={({ item }) => (
+              <Text>
+                {item.title}, {item.goals}
+              </Text>
+            )}
+          />
+        </View> */}
 
-        
+        {/* <View style={{ flex: 10, padding: 24, backgroundColor: "red" }}>
+          <FlatList
+            data={currentId}
+            renderItem={({ item }) => (
+              <Text>
+                {item.id}, {item.email}, {item.title}
+              </Text>
+            )}
+          />
+        </View> */}
+
         <View>
           <CircularProgress />
         </View>
-        <Button title = "get all habits" onPress={getHabits}/>
+
+        {/* <View style={{ flex: 10, padding: 24 }}>
+          <FlatList
+            data={habit}
+            keyExtractor={({ id }, index) => id}
+            renderItem={({ item }) => (
+              <Text>
+                {item.title}, {item.goals}
+              </Text>
+            )}
+          />
+        </View> */}
+
         <View>
           <CircularProgress />
         </View>
-
       </View>
 
       <View style={styles.footer}>
