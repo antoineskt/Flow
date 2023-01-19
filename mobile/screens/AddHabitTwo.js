@@ -64,7 +64,7 @@ const AddHabitTwo = () => {
     await AsyncStorage.setItem("myKey", JSON.stringify(data));
     setTitle("");
     setGoals("");
-    
+    navigation.navigate("Homepage");
   };
 
   // const onSubmitHandler = () => {
