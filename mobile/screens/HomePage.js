@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import React, { useCallback, useEffect, useState, useParams } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto";
 
@@ -23,106 +23,30 @@ import Icon from "react-native-vector-icons/FontAwesome";
 
 import CircularProgress from "./components/CircularProgress";
 
-import { TapGestureHandler, State } from "react-native-gesture-handler";
-import Animated, { Value, cond, eq } from "react-native-reanimated";
-import { mix, onGestureEvent, withTransition } from "react-native-redash";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_URL =
   Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
 
 const HomePage = () => {
+  const [habits, setHabits] = useState([]);
   const [isLoading, setLoading] = useState(true);
-  const [title, setTitle] = useState("");
-  const [goals, setGoals] = useState("");
+  const navigation = useNavigation();
 
-  const [habit, setHabit] = useState([]);
-  const [currentId, setCurrentId] = useState([]);
+  const fetchData = async () => {
+    const data = await AsyncStorage.getItem("myKey");
+    const habits = JSON.parse(data);
+    setHabits(habits);
+    setLoading(false);
+  };
 
-  // const getAllHabits = async () => {
-  //   try {
-  //     const response = await fetch(`${API_URL}/${"showAllHabits"}`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     const json = await response.json();
-  //     // ici le bug était que c'était (json.habit), habit étant le nom de la bd mais qui s'affiche pas ds la requete
-  //     setData(json);
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getAllHabits();
-  // }, []);
-
-  // const getCurrentId = async () => {
-  //   try {
-  //     const response = await fetch(`${API_URL}/${"getCurrentId"}`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     const json = await response.json();
-  //     // ici le bug était que c'était (json.habit), habit étant le nom de la bd mais qui s'affiche pas ds la requete
-  //     setCurrentId(json);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getCurrentId();
-  // }, []);
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem('@workout_key');
-        if (value !== null) {
-          const data = JSON.parse(value);
-          setTitle(data.title);
-          setGoals(data.goals);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
-    getData();
+    const unsubscribe = navigation.addListener("focus", fetchData);
+
+    return unsubscribe;
   }, []);
 
-  // const getHabitById = async () => {
-  //   try {
-  //     const response = await fetch(`${API_URL}/${'showHabit'}`, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         id: 1,
-  //       }),
-  //     });
-  //     const json = await response.json();
-  //     // ici le bug était que c'était (json.habit), habit étant le nom de la bd mais qui s'affiche pas ds la requete
-  //     setHabit(json);
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setLoading(false);
-
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getHabitById();
-  // }, []);
-
-  const navigation = useNavigation();
+  
 
   const [fontsLoaded] = useFonts({ Roboto_900Black });
 
@@ -163,46 +87,17 @@ const HomePage = () => {
 
       <View style={styles.body}>
         <View style={{ flex: 10, padding: 24, backgroundColor: "grey" }}>
-          <Text>Title: {title}</Text>
-          <Text>Goals: {goals}</Text>
+          <FlatList
+            data={habits}
+            refreshing={isLoading}
+            renderItem={({ item }) => <Text>{item.title}</Text>}
+            keyExtractor={(item) => item.title}
+          />
         </View>
-        {/* <View style={{ flex: 10, padding: 24, backgroundColor: "grey" }}>
-          <FlatList
-            data={data}
-            renderItem={({ item }) => (
-              <Text>
-                {item.title}, {item.goals}
-              </Text>
-            )}
-          />
-        </View> */}
-
-        {/* <View style={{ flex: 10, padding: 24, backgroundColor: "red" }}>
-          <FlatList
-            data={currentId}
-            renderItem={({ item }) => (
-              <Text>
-                {item.id}, {item.email}, {item.title}
-              </Text>
-            )}
-          />
-        </View> */}
 
         <View>
           <CircularProgress />
         </View>
-
-        {/* <View style={{ flex: 10, padding: 24 }}>
-          <FlatList
-            data={habit}
-            keyExtractor={({ id }, index) => id}
-            renderItem={({ item }) => (
-              <Text>
-                {item.title}, {item.goals}
-              </Text>
-            )}
-          />
-        </View> */}
 
         <View>
           <CircularProgress />

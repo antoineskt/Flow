@@ -24,7 +24,6 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import IconPicker from "react-native-icon-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_URL =
@@ -45,22 +44,28 @@ const AddHabitTwo = () => {
     return null;
   }
 
-  
-    const saveData = async () => {
-      try {
-        await AsyncStorage.setItem(
-          "@workout_key",
-          JSON.stringify({ title: title, goals: goals })
-        );
-      } catch (e) {
-        // saving error
-        console.log(e);
-      }
-      const currentUser = await AsyncStorage.getItem('@workout_key')
-      console.log("done")
-      console.log(currentUser)
-    };
+  const saveData = async () => {
+
+    // Récupère les données actuelles de la clé "myKey"
+    const currentData = await AsyncStorage.getItem("myKey");
+    // Parse les données JSON
+    let data = JSON.parse(currentData);
+    // Si il n'y a pas de données précédentes, créer un tableau vide
+    if (!data) {
+      data = [];
+    }
+    // Vérifie si l'objet existe déjà
+    let habitExist = data.find((item) => item.title === title);
+    if (!habitExist) {
+      // Ajoutez les données saisies par l'utilisateur
+      data.push({ title, goals });
+    }
+    // Enregistrez les données mises à jour
+    await AsyncStorage.setItem("myKey", JSON.stringify(data));
+    setTitle("");
+    setGoals("");
     
+  };
 
   // const onSubmitHandler = () => {
   //   const payload = {
@@ -163,17 +168,19 @@ const AddHabitTwo = () => {
 
         <TextInput
           style={styles.textInput}
-          autoCapitalize="none"
-          onChangeText={setTitle}
-        ></TextInput>
+          placeholder="Enter title"
+          onChangeText={(text) => setTitle(text)}
+          value={title}
+        />
 
         <Text style={styles.bodyText}>Objectif:</Text>
         <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
           <TextInput
             style={styles.textInput}
-            autoCapitalize="none"
-            onChangeText={setGoals}
-          ></TextInput>
+            placeholder="Enter goals"
+            onChangeText={(text) => setGoals(text)}
+            value={goals}
+          />
           <TextInput style={styles.textInput}>KM</TextInput>
           <TextInput style={styles.textInput}>Jours</TextInput>
         </View>
