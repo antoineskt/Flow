@@ -24,6 +24,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import CircularProgress from "./components/CircularProgress";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Card } from  '@rneui/themed';
 
 const API_URL =
   Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
@@ -41,6 +42,7 @@ const HomePage = () => {
   };
 
   useEffect(() => {
+    //permet l'actualisation de la page avec les nouvelles données 
     const unsubscribe = navigation.addListener("focus", fetchData);
 
     return unsubscribe;
@@ -52,6 +54,14 @@ const HomePage = () => {
 
   if (!fontsLoaded) {
     return null;
+  }
+
+  function renderCard ({item}) {
+    return (
+      <Card>
+        <Card.Title style={{textAlign: "left"}}>{item.title}</Card.Title>
+      </Card>
+    )
   }
 
   return (
@@ -86,22 +96,14 @@ const HomePage = () => {
       </View>
 
       <View style={styles.body}>
-        <View style={{ flex: 10, padding: 24, backgroundColor: "grey" }}>
+        
           <FlatList
             data={habits}
             refreshing={isLoading}
-            renderItem={({ item }) => <Text>{item.title}</Text>}
+            renderItem={renderCard}
             keyExtractor={(item) => item.title}
           />
-        </View>
-
-        <View>
-          <CircularProgress />
-        </View>
-
-        <View>
-          <CircularProgress />
-        </View>
+       
       </View>
 
       <View style={styles.footer}>
