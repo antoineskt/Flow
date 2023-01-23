@@ -67,64 +67,7 @@ const AddHabitTwo = () => {
     navigation.navigate("Homepage");
   };
 
-  // const onSubmitHandler = () => {
-  //   const payload = {
-  //     title,
-  //     goals,
-  //   };
-  //   fetch(`${API_URL}/${"createThing"}`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(payload),
-  //   })
-  //     .then(async (res) => {
-  //       try {
-  //         const jsonRes = await res.json();
-  //         if (res.status !== 200) {
-  //           setIsError(true);
-  //           setMessage(jsonRes.message);
-  //         }
-  //         else (console.log("Requete post bien envoyé"))
-  //       } catch (err) {
-  //         console.log(err);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
-  // const showHabit = () => {
-  //   fetch(`${API_URL}/showHabit`, {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-
-  //     },
-  //   })
-  //     .then(async (res) => {
-  //       try {
-  //         const jsonRes = await res.json();
-  //         if (res.status === 200) {
-  //           setMessage(jsonRes.message);
-  //           console.log("FINAL Réussi ")
-  //         }
-  //       } catch (err) {
-  //         console.log(err);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
-  // const getMessage = () => {
-  //   const status = isError ? `Error: ` : `Success: `;
-  //   return status + message;
-  // };
-
+ 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -181,8 +124,8 @@ const AddHabitTwo = () => {
             onChangeText={(text) => setGoals(text)}
             value={goals}
           />
-          <TextInput style={styles.textInput}>KM</TextInput>
-          <TextInput style={styles.textInput}>Jours</TextInput>
+          {/* <TextInput style={styles.textInput}>KM</TextInput>
+          <TextInput style={styles.textInput}>Jours</TextInput> */}
         </View>
 
         <Text style={styles.bodyText}>Frequence:</Text>

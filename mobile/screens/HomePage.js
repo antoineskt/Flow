@@ -10,6 +10,7 @@ import {
   Button,
   FlatList,
   ActivityIndicator,
+  SafeAreaView,
 } from "react-native";
 
 import React, { useEffect, useState } from "react";
@@ -24,7 +25,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import CircularProgress from "./components/CircularProgress";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Card } from  '@rneui/themed';
+import { Card } from "@rneui/themed";
+import { Agenda, calendarTheme, MyCustomList } from "react-native-calendars";
 
 const API_URL =
   Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
@@ -32,6 +34,7 @@ const API_URL =
 const HomePage = () => {
   const [habits, setHabits] = useState([]);
   const [isLoading, setLoading] = useState(true);
+
   const navigation = useNavigation();
 
   const fetchData = async () => {
@@ -42,13 +45,11 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    //permet l'actualisation de la page avec les nouvelles données 
+    //permet l'actualisation de la page avec les nouvelles données
     const unsubscribe = navigation.addListener("focus", fetchData);
 
     return unsubscribe;
   }, []);
-
-  
 
   const [fontsLoaded] = useFonts({ Roboto_900Black });
 
@@ -56,12 +57,12 @@ const HomePage = () => {
     return null;
   }
 
-  function renderCard ({item}) {
+  function renderCard({ item }) {
     return (
       <Card>
-        <Card.Title style={{textAlign: "left"}}>{item.title}</Card.Title>
+        <Card.Title style={{ textAlign: "left" }}>{item.title}</Card.Title>
       </Card>
-    )
+    );
   }
 
   return (
@@ -91,20 +92,34 @@ const HomePage = () => {
         </View>
       </View>
 
-      <View style={styles.secondHeader}>
-        <Text style={styles.inscription}> 9 Octobre </Text>
-      </View>
+    
+
+      <SafeAreaView style={{ flex: 20}}>
+      <Agenda
+        // Initially selected day
+        selected="2023-01-24"
+
+        items={{
+          '2023-01-24': [{name: 'Cycling'}, {name: 'Walking'}, {name: 'Running'}],
+          '2023-01-25': [{name: 'Writing'}]
+        }}
+        renderItem={(item, isFirst) => (
+          <TouchableOpacity style={styles.item}>
+            <Text style={styles.itemText}>{item.name}</Text>
+          </TouchableOpacity>
+        )}
+      />
+      </SafeAreaView>
 
       <View style={styles.body}>
-        
-          <FlatList
-            data={habits}
-            refreshing={isLoading}
-            renderItem={renderCard}
-            keyExtractor={(item) => item.title}
-          />
-       
+        <FlatList
+          data={habits}
+          refreshing={isLoading}
+          renderItem={renderCard}
+          keyExtractor={(item) => item.title}
+        />
       </View>
+      
 
       <View style={styles.footer}>
         <Icon.Button
@@ -163,22 +178,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 
-  secondHeader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "yellow",
-  },
-
-  inscription: {
-    fontFamily: "Roboto_900Black",
-    fontSize: 24,
-    color: "black",
-    textTransform: "uppercase",
-
-    alignSelf: "center",
-  },
-
   logintext: {
     color: "#FF5C00",
     fontFamily: "Roboto_900Black",
@@ -193,6 +192,19 @@ const styles = StyleSheet.create({
     flex: 12,
     flexDirection: "row",
     flexWrap: "wrap",
+  },
+
+  item: {
+    backgroundColor: 'white',
+    flex: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginRight: 10,
+    marginTop: 17,
+  },
+  itemText: {
+    color: '#888',
+    fontSize: 16,
   },
 
   circle: {
