@@ -44,7 +44,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "react-native-dotenv": "^3.4.7"
   },
   "private": true
 }

@@ -1,6 +1,13 @@
 import { Sequelize } from 'sequelize';
 
-const sequelize = new Sequelize('logindb', 'root', 'Toinous3071!', {
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const databasePassword = process.env.DB_PASSWORD;
+
+
+const sequelize = new Sequelize('logindb', 'root', databasePassword, {
     dialect: 'mysql',
     host: 'localhost', 
 });

@@ -26,10 +26,10 @@ import CircularProgress from "./components/CircularProgress";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Card } from "@rneui/themed";
-import { Agenda, calendarTheme, MyCustomList } from "react-native-calendars";
+import { Agenda, calendarTheme, MyCustomList, WeekCalendar, ExpandableCalendar } from "react-native-calendars";
 
 const API_URL =
-  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
+  Platform.OS === "ios" ? "http://172.20.10.8:5000" : "http://10.0.2.2:5000";
 
 const HomePage = () => {
   const [habits, setHabits] = useState([]);
@@ -60,7 +60,7 @@ const HomePage = () => {
   function renderCard({ item }) {
     return (
       <Card>
-        <Card.Title style={{ textAlign: "left" }}>{item.title}</Card.Title>
+        <Card.Title style={{ textAlign: "left" }}>{item.title}{item.goals}</Card.Title>
       </Card>
     );
   }
@@ -95,20 +95,20 @@ const HomePage = () => {
     
 
       <SafeAreaView style={{ flex: 20}}>
-      <Agenda
+        < Agenda 
+        
         // Initially selected day
         selected="2023-01-24"
 
-        items={{
-          '2023-01-24': [{name: 'Cycling'}, {name: 'Walking'}, {name: 'Running'}],
-          '2023-01-25': [{name: 'Writing'}]
-        }}
-        renderItem={(item, isFirst) => (
+        items={habits}
+        renderItem={(item) => (
           <TouchableOpacity style={styles.item}>
-            <Text style={styles.itemText}>{item.name}</Text>
+            <Text style={styles.itemText}>{item.title}</Text>
           </TouchableOpacity>
         )}
-      />
+        hideKnob={true} //cache la fleche qui permet d'ouvrir l'ensemble du calendrier/>
+
+          />
       </SafeAreaView>
 
       <View style={styles.body}>

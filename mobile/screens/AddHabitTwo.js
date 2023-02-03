@@ -56,6 +56,7 @@ const AddHabitTwo = () => {
     }
     // Vérifie si l'objet existe déjà
     let habitExist = data.find((item) => item.title === title);
+    
     if (!habitExist) {
       // Ajoutez les données saisies par l'utilisateur
       data.push({ title, goals });
@@ -120,7 +121,7 @@ const AddHabitTwo = () => {
         <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
           <TextInput
             style={styles.textInput}
-            placeholder="Enter goals"
+            placeholder="Enter date YYYY-MM-DD"
             onChangeText={(text) => setGoals(text)}
             value={goals}
           />
