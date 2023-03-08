@@ -26,14 +26,36 @@ import CircularProgress from "./components/CircularProgress";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Card } from "@rneui/themed";
-import { Agenda, calendarTheme, MyCustomList, WeekCalendar, ExpandableCalendar } from "react-native-calendars";
+import {
+  Agenda,
+  Calendar,
+  calendarTheme,
+  MyCustomList,
+  WeekCalendar,
+  ExpandableCalendar,
+} from "react-native-calendars";
+import { generateEventsForWeek } from "./components/generateEventsForWeek";
+import moment from "moment";
 
 const API_URL =
-  Platform.OS === "ios" ? "http://172.20.10.8:5000" : "http://10.0.2.2:5000";
+  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
 
 const HomePage = () => {
-  const [habits, setHabits] = useState([]);
+  const [habits, setHabits] = useState(allAgendaDates);
   const [isLoading, setLoading] = useState(true);
+  const [itemsForSelectedDay, setItemsForSelectedDay] = useState({});
+  
+
+  const allAgendaDates = {
+    "2023-03-07": ["workout", "natation"],
+    "2023-03-08": ["swimming" ,  "clope"],
+    "2023-03-09": ["running" , "pizaa"]
+  };
+  // c'est un objet, pas un tableau
+
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().slice(0, 10)
+  );
 
   const navigation = useNavigation();
 
@@ -60,10 +82,61 @@ const HomePage = () => {
   function renderCard({ item }) {
     return (
       <Card>
-        <Card.Title style={{ textAlign: "left" }}>{item.title}{item.goals}</Card.Title>
+        <Card.Title style={{ textAlign: "left" }}>
+          {item.title}
+          {item.goals}
+        </Card.Title>
       </Card>
     );
   }
+
+  
+ 
+ 
+
+  console.log("homepage actualisé");
+  
+
+  const getMarkedDates = () => {
+    let markedDates = {};
+    Object.keys(allAgendaDates).map((date) => {
+      //console.log(date);
+      markedDates[date] = {
+        marked: true,
+      };
+    });
+    //console.log(markedDates);
+    return markedDates;
+  };
+
+  //on récupérer la date cliquée quand on clique(onclick=onUpdate) qu'on passe en propriété
+  const onUpdateSelectedDate = (date) => {
+    const recupDateCorrespondante = allAgendaDates[date.dateString];
+    console.log("log de recupDate : " + recupDateCorrespondante);
+
+    const updatedItemsForSelectedDay = {
+      [date.dateString]: recupDateCorrespondante
+    };
+    console.log(updatedItemsForSelectedDay);
+    setItemsForSelectedDay(updatedItemsForSelectedDay);
+  
+    // const eventsForDate = allAgendaDates[date.dateString]; //on recupére la date correspondante cliquée
+    
+    // if (eventsForDate) {
+    //   console.log(`le jour de la date cliquée est ${typeof date.dateString}`); // 2023-03-02 type string
+    //   console.log(`je console log eventsForDate qui est ${eventsForDate}`); // swimiing, clope
+    //   console.log(`je log object.values(eventsfordate) : ${Object.values(eventsForDate)}`); // swimming, clope
+    //   console.log(`je console log allagendates.eventfordate : ${allAgendaDates.eventsForDate}`); //undefined
+    //   setItemsForSelectedDay(Object.values(eventsForDate));
+
+    //   const valueItem = Object.values(eventsForDate);
+    //   setItemsForSelectedDay(valueItem);
+    //   setItemsForSelectedDay(eventsForDate);
+   
+    // } else {
+    //   console.log("pas de data");
+    // }
+  };
 
   return (
     <View style={styles.container}>
@@ -92,23 +165,26 @@ const HomePage = () => {
         </View>
       </View>
 
-    
-
-      <SafeAreaView style={{ flex: 20}}>
-        < Agenda 
-        
-        // Initially selected day
-        selected="2023-01-24"
-
-        items={habits}
-        renderItem={(item) => (
-          <TouchableOpacity style={styles.item}>
-            <Text style={styles.itemText}>{item.title}</Text>
-          </TouchableOpacity>
-        )}
-        hideKnob={true} //cache la fleche qui permet d'ouvrir l'ensemble du calendrier/>
-
-          />
+      <SafeAreaView style={{ flex: 20 }}>
+        <Agenda
+          // Initially selected day
+          selected={selectedDate}
+          minDate={"2023-01-01"}
+          maxDate={"2023-12-31"}
+          items={itemsForSelectedDay}
+          onDayPress={onUpdateSelectedDate}
+          markedDates={getMarkedDates()}
+          renderItem={(item) => <Text></Text>}
+          // Specify how each date should be rendered. day can be undefined if the item is not first in that day
+          renderDay={(day, item) => {
+            return <View>{item && <Text>{item}</Text>}</View>;
+          }}
+          hideKnob={true} //cache la fleche qui permet d'ouvrir l'ensemble du calendrier/>
+          // Specify what should be rendered instead of ActivityIndicator
+          renderEmptyData={() => {
+            return <View />;
+          }}
+        />
       </SafeAreaView>
 
       <View style={styles.body}>
@@ -119,7 +195,6 @@ const HomePage = () => {
           keyExtractor={(item) => item.title}
         />
       </View>
-      
 
       <View style={styles.footer}>
         <Icon.Button
@@ -195,7 +270,7 @@ const styles = StyleSheet.create({
   },
 
   item: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     flex: 1,
     borderRadius: 5,
     padding: 10,
@@ -203,8 +278,44 @@ const styles = StyleSheet.create({
     marginTop: 17,
   },
   itemText: {
-    color: '#888',
+    color: "black",
     fontSize: 16,
+  },
+
+  calendar: {
+    borderTopWidth: 1,
+    paddingTop: 5,
+    borderBottomWidth: 1,
+    borderColor: "#eee",
+  },
+  appointmentsContainer: {
+    marginTop: 20,
+    marginHorizontal: 10,
+  },
+  appointmentTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  appointment: {
+    backgroundColor: "#428bca",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  appointmentText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  noSelectionContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noSelectionText: {
+    fontSize: 20,
+    color: "#428bca",
+    textAlign: "center",
   },
 
   circle: {

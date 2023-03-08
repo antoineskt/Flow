@@ -9,9 +9,13 @@ import {
   Platform,
   Button,
   FlatList,
+  
+  
+  
 } from "react-native";
 
 import React, { useCallback, useEffect, useState } from "react";
+
 
 import {
   useFonts,
@@ -25,13 +29,23 @@ import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Checkbox from 'expo-checkbox';
 
 const API_URL =
   Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
 
 const AddHabitTwo = () => {
   const [title, setTitle] = useState("");
-  const [goals, setGoals] = useState("");
+  
+  const [daysOfWeek, setDaysOfWeek] = useState({
+    Monday: false,
+    Tuesday: false,
+    Wednesday: false,
+    Thursday: false,
+    Friday: false,
+    Saturday: false,
+    Sunday: false,
+  });
 
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
@@ -44,8 +58,9 @@ const AddHabitTwo = () => {
     return null;
   }
 
-  const saveData = async () => {
 
+  //ENREGISTREMENT DES DONNES DANS ASYNCSTORAGE
+  const saveData = async () => {
     // Récupère les données actuelles de la clé "myKey"
     const currentData = await AsyncStorage.getItem("myKey");
     // Parse les données JSON
@@ -56,19 +71,26 @@ const AddHabitTwo = () => {
     }
     // Vérifie si l'objet existe déjà
     let habitExist = data.find((item) => item.title === title);
-    
+
     if (!habitExist) {
       // Ajoutez les données saisies par l'utilisateur
-      data.push({ title, goals });
+      data.push({ title, daysOfWeek });
     }
     // Enregistrez les données mises à jour
     await AsyncStorage.setItem("myKey", JSON.stringify(data));
     setTitle("");
-    setGoals("");
+    setDaysOfWeek({
+      Monday: false,
+      Tuesday: false,
+      Wednesday: false,
+      Thursday: false,
+      Friday: false,
+      Saturday: false,
+      Sunday: false,
+    });
     navigation.navigate("Homepage");
   };
 
- 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -112,37 +134,84 @@ const AddHabitTwo = () => {
 
         <TextInput
           style={styles.textInput}
-          placeholder="Enter title"
+          placeholder="Entre ton titre ici"
           onChangeText={(text) => setTitle(text)}
           value={title}
         />
 
-        <Text style={styles.bodyText}>Objectif:</Text>
+
+
+        <Text style={styles.bodyText}>Quels jours répéter l'objectif ? </Text>
         <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter date YYYY-MM-DD"
-            onChangeText={(text) => setGoals(text)}
-            value={goals}
-          />
-          {/* <TextInput style={styles.textInput}>KM</TextInput>
-          <TextInput style={styles.textInput}>Jours</TextInput> */}
-        </View>
+        
+      <Checkbox
+        value={daysOfWeek.Monday}
+        onValueChange={(newValue) =>
+          setDaysOfWeek((prev) => ({ ...prev, Monday: newValue }))
+        }
+        label="Monday"
+      />
+      
+      <Checkbox
+        value={daysOfWeek.Tuesday}
+        onValueChange={(newValue) =>
+          setDaysOfWeek((prev) => ({ ...prev, Tuesday: newValue }))
+        }
+        label="Tuesday"
+      />
+      <Checkbox
+        value={daysOfWeek.Wednesday}
+        onValueChange={(newValue) =>
+          setDaysOfWeek((prev) => ({ ...prev, Wednesday: newValue }))
+        }
+        label="Wednesday"
+      />
+      <Checkbox
+        value={daysOfWeek.Thursday}
+        onValueChange={(newValue) =>
+          setDaysOfWeek((prev) => ({ ...prev, Thursday: newValue }))
+        }
+        label="Thursday"
+      />
+      <Checkbox
+        value={daysOfWeek.Friday}
+        onValueChange={(newValue) =>
+          setDaysOfWeek((prev) => ({ ...prev, Friday: newValue }))
+        }
+        label="Friday"
+      />
+      <Checkbox
+        value={daysOfWeek.Saturday}
+        onValueChange={(newValue) =>
+          setDaysOfWeek((prev) => ({ ...prev, Saturday: newValue }))
+        }
+        label="Saturday"
+      />
+      <Checkbox
+        value={daysOfWeek.Sunday}
+        onValueChange={(newValue) =>
+          setDaysOfWeek((prev) => ({ ...prev, Sunday: newValue }))
+        }
+        label="Sunday"
+      />
+      </View>
 
-        <Text style={styles.bodyText}>Frequence:</Text>
-        <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
-          <TextInput style={styles.textInput}>Quotidien</TextInput>
-          <TextInput style={styles.textInput}>Hebdomadaire</TextInput>
-          <TextInput style={styles.textInput}>Mensuel</TextInput>
-        </View>
+      <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
 
-        <Text style={styles.bodyText}>Rappel de l'habitude:</Text>
+        <Text>Lun</Text>
+        <Text>Mar</Text>
+        <Text>Mer</Text>
+        <Text>Jeu</Text> 
+        <Text>Ven</Text> 
+        <Text>Sam</Text>
+        <Text>Dim</Text>
+        
+      </View>
 
-        <TextInput style={styles.textInput}>17h35</TextInput>
 
-        <Text style={styles.bodyText}>Icone:</Text>
+        {/* <Text style={styles.bodyText}>Icone:</Text> */}
 
-        <View>
+        {/* <View>
           <FontAwesome5.Button
             name="walking"
             color={"black"}
@@ -156,9 +225,9 @@ const AddHabitTwo = () => {
             backgroundColor={"transparent"}
             onPress={() => navigation.navigate("AddHabitTwo")}
           />
-        </View>
+        </View> */}
 
-        <View></View>
+        
       </View>
 
       <View style={styles.viewValidate}>
