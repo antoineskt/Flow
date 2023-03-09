@@ -31,24 +31,23 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Checkbox from 'expo-checkbox';
 
-const API_URL =
-  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
-
 const AddHabitTwo = () => {
   const [title, setTitle] = useState("");
   
   const [daysOfWeek, setDaysOfWeek] = useState({
-    Monday: false,
-    Tuesday: false,
-    Wednesday: false,
-    Thursday: false,
-    Friday: false,
-    Saturday: false,
-    Sunday: false,
+    Lundi: false,
+    Mardi: false,
+    Mercredi: false,
+    Jeudi: false,
+    Vendredi: false,
+    Samedi: false,
+    Dimanche: false,
   });
 
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
+
+  const [isChecked, setChecked] = useState(false);
 
   const navigation = useNavigation();
 
@@ -61,6 +60,9 @@ const AddHabitTwo = () => {
 
   //ENREGISTREMENT DES DONNES DANS ASYNCSTORAGE
   const saveData = async () => {
+    const trueDays = Object.keys(daysOfWeek).filter(day => daysOfWeek[day]);
+    console.log(`je log truedays : ${trueDays}`);
+
     // Récupère les données actuelles de la clé "myKey"
     const currentData = await AsyncStorage.getItem("myKey");
     // Parse les données JSON
@@ -74,19 +76,22 @@ const AddHabitTwo = () => {
 
     if (!habitExist) {
       // Ajoutez les données saisies par l'utilisateur
-      data.push({ title, daysOfWeek });
+      data.push({ title, trueDays });
     }
+
+
     // Enregistrez les données mises à jour
     await AsyncStorage.setItem("myKey", JSON.stringify(data));
+    console.log(`je log data :  ${data}`);
     setTitle("");
     setDaysOfWeek({
-      Monday: false,
-      Tuesday: false,
-      Wednesday: false,
-      Thursday: false,
-      Friday: false,
-      Saturday: false,
-      Sunday: false,
+      Lundi: false,
+      Mardi: false,
+      Mercredi: false,
+      Jeudi: false,
+      Vendredi: false,
+      Samedi: false,
+      Dimanche: false,
     });
     navigation.navigate("Homepage");
   };
@@ -145,54 +150,55 @@ const AddHabitTwo = () => {
         <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
         
       <Checkbox
-        value={daysOfWeek.Monday}
+        value={daysOfWeek.Lundi}
         onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Monday: newValue }))
+          setDaysOfWeek((prev) => ({ ...prev, Lundi: newValue }))
         }
-        label="Monday"
+        label="Lundi"
+
       />
       
       <Checkbox
-        value={daysOfWeek.Tuesday}
+        value={daysOfWeek.Mardi}
         onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Tuesday: newValue }))
+          setDaysOfWeek((prev) => ({ ...prev, Mardi: newValue }))
         }
-        label="Tuesday"
+        label="Mardi"
       />
       <Checkbox
-        value={daysOfWeek.Wednesday}
+        value={daysOfWeek.Mercredi}
         onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Wednesday: newValue }))
+          setDaysOfWeek((prev) => ({ ...prev, Mercredi: newValue }))
         }
-        label="Wednesday"
+        label="Mercredi"
       />
       <Checkbox
-        value={daysOfWeek.Thursday}
+        value={daysOfWeek.Jeudi}
         onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Thursday: newValue }))
+          setDaysOfWeek((prev) => ({ ...prev, Jeudi: newValue }))
         }
-        label="Thursday"
+        label="Jeudi"
       />
       <Checkbox
-        value={daysOfWeek.Friday}
+        value={daysOfWeek.Vendredi}
         onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Friday: newValue }))
+          setDaysOfWeek((prev) => ({ ...prev, Vendredi: newValue }))
         }
-        label="Friday"
+        label="Vendredi"
       />
       <Checkbox
-        value={daysOfWeek.Saturday}
+        value={daysOfWeek.Samedi}
         onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Saturday: newValue }))
+          setDaysOfWeek((prev) => ({ ...prev, Samedi: newValue }))
         }
-        label="Saturday"
+        label="Samedi"
       />
       <Checkbox
-        value={daysOfWeek.Sunday}
+        value={daysOfWeek.Dimanche}
         onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Sunday: newValue }))
+          setDaysOfWeek((prev) => ({ ...prev, Dimanche: newValue }))
         }
-        label="Sunday"
+        label="Dimanche"
       />
       </View>
 

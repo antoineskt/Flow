@@ -22,8 +22,6 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import Icon from "react-native-vector-icons/FontAwesome";
 
-import CircularProgress from "./components/CircularProgress";
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Card } from "@rneui/themed";
 import {
@@ -33,6 +31,7 @@ import {
   MyCustomList,
   WeekCalendar,
   ExpandableCalendar,
+  LocaleConfig,
 } from "react-native-calendars";
 import { generateEventsForWeek } from "./components/generateEventsForWeek";
 import moment from "moment";
@@ -41,29 +40,118 @@ const API_URL =
   Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
 
 const HomePage = () => {
-  const [habits, setHabits] = useState(allAgendaDates);
+  //const [habits, setHabits] = useState(allAgendaDates);
   const [isLoading, setLoading] = useState(true);
   const [itemsForSelectedDay, setItemsForSelectedDay] = useState({});
-  
+  const [allAgendaDates, setAllAgendaDates] = useState({});
+  // const allAgendaDates = {
+  //   "2023-03-07": ["workout", "natation"],
+  //   "2023-03-08": ["swimming", "clope"],
+  //   "2023-03-09": ["running", "pizaa"],
+  // };
 
-  const allAgendaDates = {
-    "2023-03-07": ["workout", "natation"],
-    "2023-03-08": ["swimming" ,  "clope"],
-    "2023-03-09": ["running" , "pizaa"]
-  };
-  // c'est un objet, pas un tableau
-
+  //recup date du jour
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
 
+ 
   const navigation = useNavigation();
 
+  LocaleConfig.locales["fr"] = {
+    monthNames: [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre",
+    ],
+    monthNamesShort: [
+      "Janv.",
+      "Févr.",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juil.",
+      "Août",
+      "Sept.",
+      "Oct.",
+      "Nov.",
+      "Déc.",
+    ],
+    dayNames: [
+      "Dimanche",
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi",
+    ],
+    dayNamesShort: ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."],
+    today: "Aujourd'hui",
+  };
+  LocaleConfig.defaultLocale = "fr";
+
+ 
+
   const fetchData = async () => {
+    console.log("log depuis fetchdata ");
     const data = await AsyncStorage.getItem("myKey");
-    const habits = JSON.parse(data);
-    setHabits(habits);
+    const parsedData = JSON.parse(data);
+    console.log(`je log paresedData : ${parsedData}`);
+    console.log((JSON.stringify(parsedData))); // {"title":"Workout ","trueDays":["Mardi","Mercredi"]}
+    
+    // const habits = JSON.parse(data);
+    // setHabits(habits);
     setLoading(false);
+
+    // Initialiser un objet pour stocker les dates et les titres
+    const calendarData = {};
+
+    // Parcourir les jours de la semaine
+    [
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi",
+      "Dimanche",
+    ].forEach((day, index) => {
+      // Vérifier si le jour est sélectionné par l'utilisateur
+      if (parsedData[0].trueDays.includes(day)) {
+        // Créer une date pour ce jour
+        const date = moment().day(index + 1);
+        console.log(`je log date : ${date}`);
+
+        // Vérifier si cette date existe déjà dans l'objet calendarData
+        const dateString = date.format("YYYY-MM-DD");
+        console.log(`je log datestring : ${dateString}`);
+
+        if (calendarData[dateString]) {
+          // Si la date existe, ajouter le titre à la liste existante
+          calendarData[dateString].push(parsedData[0].title);
+        } else {
+          // Sinon, créer une nouvelle liste pour cette date
+          calendarData[dateString] = [parsedData[0].title];
+          console.log(`je log calendardata après le else : ${calendarData}`);
+        }
+
+        
+      }
+      else {console.log('dans le else: pas de day, condition if marche pas')};
+    });
+    setAllAgendaDates(calendarData);
+    console.log(`je log calendarData : ${calendarData}`);
   };
 
   useEffect(() => {
@@ -90,12 +178,7 @@ const HomePage = () => {
     );
   }
 
-  
- 
- 
-
   console.log("homepage actualisé");
-  
 
   const getMarkedDates = () => {
     let markedDates = {};
@@ -111,17 +194,17 @@ const HomePage = () => {
 
   //on récupérer la date cliquée quand on clique(onclick=onUpdate) qu'on passe en propriété
   const onUpdateSelectedDate = (date) => {
-    const recupDateCorrespondante = allAgendaDates[date.dateString];
-    console.log("log de recupDate : " + recupDateCorrespondante);
+    const recupDateCorrespondante = allAgendaDates[date.dateString]; //recup le titre qui correspond a la date
+    console.log("log de recupDate : " + recupDateCorrespondante); //undefined
 
     const updatedItemsForSelectedDay = {
-      [date.dateString]: recupDateCorrespondante
+      [date.dateString]: recupDateCorrespondante,
     };
-    console.log(updatedItemsForSelectedDay);
+    console.log(updatedItemsForSelectedDay); // {"2023-03-XX": undefined}
     setItemsForSelectedDay(updatedItemsForSelectedDay);
-  
+
     // const eventsForDate = allAgendaDates[date.dateString]; //on recupére la date correspondante cliquée
-    
+
     // if (eventsForDate) {
     //   console.log(`le jour de la date cliquée est ${typeof date.dateString}`); // 2023-03-02 type string
     //   console.log(`je console log eventsForDate qui est ${eventsForDate}`); // swimiing, clope
@@ -132,7 +215,7 @@ const HomePage = () => {
     //   const valueItem = Object.values(eventsForDate);
     //   setItemsForSelectedDay(valueItem);
     //   setItemsForSelectedDay(eventsForDate);
-   
+
     // } else {
     //   console.log("pas de data");
     // }
@@ -187,14 +270,14 @@ const HomePage = () => {
         />
       </SafeAreaView>
 
-      <View style={styles.body}>
+      {/* <View style={styles.body}>
         <FlatList
           data={habits}
           refreshing={isLoading}
           renderItem={renderCard}
           keyExtractor={(item) => item.title}
         />
-      </View>
+      </View> */}
 
       <View style={styles.footer}>
         <Icon.Button
