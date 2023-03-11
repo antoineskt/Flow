@@ -9,13 +9,9 @@ import {
   Platform,
   Button,
   FlatList,
-  
-  
-  
 } from "react-native";
 
 import React, { useCallback, useEffect, useState } from "react";
-
 
 import {
   useFonts,
@@ -29,11 +25,21 @@ import { LinearGradient } from "expo-linear-gradient";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Checkbox from 'expo-checkbox';
+import Checkbox from "expo-checkbox";
+import {
+  Agenda,
+  Calendar,
+  calendarTheme,
+  MyCustomList,
+  WeekCalendar,
+  ExpandableCalendar,
+  LocaleConfig,
+} from "react-native-calendars";
+import moment from "moment";
 
 const AddHabitTwo = () => {
   const [title, setTitle] = useState("");
-  
+
   const [daysOfWeek, setDaysOfWeek] = useState({
     Lundi: false,
     Mardi: false,
@@ -57,32 +63,165 @@ const AddHabitTwo = () => {
     return null;
   }
 
+  LocaleConfig.locales["fr"] = {
+    monthNames: [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre",
+    ],
+    monthNamesShort: [
+      "Janv.",
+      "Févr.",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juil.",
+      "Août",
+      "Sept.",
+      "Oct.",
+      "Nov.",
+      "Déc.",
+    ],
+    dayNames: [
+      "Dimanche",
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi",
+    ],
+    dayNamesShort: ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."],
+    today: "Aujourd'hui",
+  };
+  LocaleConfig.defaultLocale = "fr";
 
   //ENREGISTREMENT DES DONNES DANS ASYNCSTORAGE
   const saveData = async () => {
-    const trueDays = Object.keys(daysOfWeek).filter(day => daysOfWeek[day]);
-    console.log(`je log truedays : ${trueDays}`);
+    //on trie que les jours selectionnés (true)
+    const trueDays = Object.keys(daysOfWeek).filter((day) => daysOfWeek[day]);
+    console.log(`je log truedays : ${trueDays}`); //lundi mardi
+    console.log(`je log title : ${title}`);
+
+    //ici on a juste des truedays et title on peut transormer le truedays en date réelle
+
+    // Initialiser un objet pour stocker les dates et les titres
+    const realDate = {};
+
+    // Parcourir les jours de la semaine
+    [
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi",
+      "Dimanche",
+    ].forEach((day, index) => {
+      // Vérifier si le jour est sélectionné par l'utilisateur
+      if (trueDays.includes(day)) {
+        console.log(
+          "le if parsedata fonctionne, inclut donc un jour de la semaine"
+        );
+        // Créer une date pour ce jour
+        const date = moment().day(index + 1);
+        console.log(`Création de la date, je log date : ${date}`);
+
+        //mise au bon format
+        const dateString = date.format("YYYY-MM-DD");
+        console.log(
+          `Création du bon format, je log datestring : ${dateString}`
+        );
+
+        //créer d'une nouvelle liste pour cette date sous la bonne forme
+        realDate[dateString] = [title];
+        console.log("création du nouvel objet au bon format réussi");
+        console.log(
+          `je log le nouvel objet fraichment crée realDate : ${JSON.stringify(
+            realDate
+          )}`
+        );
+      }
+    });
+    console.log(
+      "Fin du formatage complet des nouvelles données avec les dates et titres"
+    );
 
     // Récupère les données actuelles de la clé "myKey"
     const currentData = await AsyncStorage.getItem("myKey");
     // Parse les données JSON
     let data = JSON.parse(currentData);
-    // Si il n'y a pas de données précédentes, créer un tableau vide
+    let dataInKey = JSON.stringify(data);
+    console.log("log de dataInKey : " + dataInKey);
+
+    // si il n'y a pas de donnée dans la clef async on crée un nouvel objet
     if (!data) {
+      console.log("pas de donné dans la clé");
       data = [];
-    }
-    // Vérifie si l'objet existe déjà
-    let habitExist = data.find((item) => item.title === title);
+      data.push(realDate);
+      console.log("envoi de réelle date dans la cle");
+      console.log(`voici le nv objet: ${JSON.stringify(realDate)}`);
+      console.log(data);
+    } else {
+      // si il y a deja des données
+      console.log("il y a deja des donnée(data) dans la cle");
 
-    if (!habitExist) {
-      // Ajoutez les données saisies par l'utilisateur
-      data.push({ title, trueDays });
-    }
+      // vérifier si une date similaire existe deja :
+      // Parcourir toutes les propriétés de l'objet
+      for (let date in realDate) {
+        console.log("vérification si une date est similaire dans nos données");
+        for (let i = 0; i < data.length; i++) {
+          const obj = data[i];
+          // check if there is a similar date
+          if (obj.hasOwnProperty(date)) {
+            console.log(`IL y a une date similaire qui est ${date}`);
 
+            // check if the title for this date already exists in realDate
+            const realDateTitles = realDate[date];
+            const dataTitles = obj[date];
+            for (let j = 0; j < realDateTitles.length; j++) {
+              if (dataTitles.includes(realDateTitles[j])) {
+                console.log(
+                  `Title "${realDateTitles[j]}" already exists for date ${date}`
+                );
+              } else {
+                //ajouter le titre à la liste pour cette date
+                //data[date].push(title);
+                console.log(
+                  `Adding title "${realDateTitles[j]}" for date ${date}`
+                );
+                obj[date].push(realDateTitles[j]);
+                //realDate[date].push(realDateTitles[j]);
+                console.log("Le titre a été ajouté à la liste pour cette date");
+              }
+            }
+          } else {
+            console.log("pas de date similaire trouvée dans les données");
+            // La date n'existe pas encore, on ajoute la liste entière pour cette date
+            data.push({[date]: realDate[date]}); //crée un nouvel objet
+            console.log("ajout de la nouvelle realdate dans data");
+            //data[date] = realDate[date];
+          };
+        }
+      }
+    }
 
     // Enregistrez les données mises à jour
+    // Si data a été modifié, enregistrer les données mises à jour
+
     await AsyncStorage.setItem("myKey", JSON.stringify(data));
-    console.log(`je log data :  ${data}`);
+    console.log(`maj de la clef réussie`);
+
     setTitle("");
     setDaysOfWeek({
       Lundi: false,
@@ -144,76 +283,69 @@ const AddHabitTwo = () => {
           value={title}
         />
 
-
-
         <Text style={styles.bodyText}>Quels jours répéter l'objectif ? </Text>
         <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
-        
-      <Checkbox
-        value={daysOfWeek.Lundi}
-        onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Lundi: newValue }))
-        }
-        label="Lundi"
+          <Checkbox
+            value={daysOfWeek.Lundi}
+            onValueChange={(newValue) =>
+              setDaysOfWeek((prev) => ({ ...prev, Lundi: newValue }))
+            }
+            label="Lundi"
+          />
 
-      />
-      
-      <Checkbox
-        value={daysOfWeek.Mardi}
-        onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Mardi: newValue }))
-        }
-        label="Mardi"
-      />
-      <Checkbox
-        value={daysOfWeek.Mercredi}
-        onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Mercredi: newValue }))
-        }
-        label="Mercredi"
-      />
-      <Checkbox
-        value={daysOfWeek.Jeudi}
-        onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Jeudi: newValue }))
-        }
-        label="Jeudi"
-      />
-      <Checkbox
-        value={daysOfWeek.Vendredi}
-        onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Vendredi: newValue }))
-        }
-        label="Vendredi"
-      />
-      <Checkbox
-        value={daysOfWeek.Samedi}
-        onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Samedi: newValue }))
-        }
-        label="Samedi"
-      />
-      <Checkbox
-        value={daysOfWeek.Dimanche}
-        onValueChange={(newValue) =>
-          setDaysOfWeek((prev) => ({ ...prev, Dimanche: newValue }))
-        }
-        label="Dimanche"
-      />
-      </View>
+          <Checkbox
+            value={daysOfWeek.Mardi}
+            onValueChange={(newValue) =>
+              setDaysOfWeek((prev) => ({ ...prev, Mardi: newValue }))
+            }
+            label="Mardi"
+          />
+          <Checkbox
+            value={daysOfWeek.Mercredi}
+            onValueChange={(newValue) =>
+              setDaysOfWeek((prev) => ({ ...prev, Mercredi: newValue }))
+            }
+            label="Mercredi"
+          />
+          <Checkbox
+            value={daysOfWeek.Jeudi}
+            onValueChange={(newValue) =>
+              setDaysOfWeek((prev) => ({ ...prev, Jeudi: newValue }))
+            }
+            label="Jeudi"
+          />
+          <Checkbox
+            value={daysOfWeek.Vendredi}
+            onValueChange={(newValue) =>
+              setDaysOfWeek((prev) => ({ ...prev, Vendredi: newValue }))
+            }
+            label="Vendredi"
+          />
+          <Checkbox
+            value={daysOfWeek.Samedi}
+            onValueChange={(newValue) =>
+              setDaysOfWeek((prev) => ({ ...prev, Samedi: newValue }))
+            }
+            label="Samedi"
+          />
+          <Checkbox
+            value={daysOfWeek.Dimanche}
+            onValueChange={(newValue) =>
+              setDaysOfWeek((prev) => ({ ...prev, Dimanche: newValue }))
+            }
+            label="Dimanche"
+          />
+        </View>
 
-      <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
-
-        <Text>Lun</Text>
-        <Text>Mar</Text>
-        <Text>Mer</Text>
-        <Text>Jeu</Text> 
-        <Text>Ven</Text> 
-        <Text>Sam</Text>
-        <Text>Dim</Text>
-        
-      </View>
-
+        <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
+          <Text>Lun</Text>
+          <Text>Mar</Text>
+          <Text>Mer</Text>
+          <Text>Jeu</Text>
+          <Text>Ven</Text>
+          <Text>Sam</Text>
+          <Text>Dim</Text>
+        </View>
 
         {/* <Text style={styles.bodyText}>Icone:</Text> */}
 
@@ -232,8 +364,6 @@ const AddHabitTwo = () => {
             onPress={() => navigation.navigate("AddHabitTwo")}
           />
         </View> */}
-
-        
       </View>
 
       <View style={styles.viewValidate}>

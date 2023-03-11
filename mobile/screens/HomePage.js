@@ -55,9 +55,9 @@ const HomePage = () => {
     new Date().toISOString().slice(0, 10)
   );
 
- 
   const navigation = useNavigation();
 
+ 
   LocaleConfig.locales["fr"] = {
     monthNames: [
       "Janvier",
@@ -101,57 +101,30 @@ const HomePage = () => {
   };
   LocaleConfig.defaultLocale = "fr";
 
- 
+
 
   const fetchData = async () => {
     console.log("log depuis fetchdata ");
     const data = await AsyncStorage.getItem("myKey");
     const parsedData = JSON.parse(data);
-    console.log(`je log paresedData : ${parsedData}`);
-    console.log((JSON.stringify(parsedData))); // {"title":"Workout ","trueDays":["Mardi","Mercredi"]}
-    
-    // const habits = JSON.parse(data);
-    // setHabits(habits);
+    console.log(`je log paresedData : ${parsedData}`); //[object, object]
+    console.log(JSON.stringify(parsedData)); // [{"title":["Workout "],"trueDays":["Mardi","Mercredi"]}]
+
     setLoading(false);
 
-    // Initialiser un objet pour stocker les dates et les titres
-    const calendarData = {};
-
-    // Parcourir les jours de la semaine
-    [
-      "Lundi",
-      "Mardi",
-      "Mercredi",
-      "Jeudi",
-      "Vendredi",
-      "Samedi",
-      "Dimanche",
-    ].forEach((day, index) => {
-      // Vérifier si le jour est sélectionné par l'utilisateur
-      if (parsedData[0].trueDays.includes(day)) {
-        // Créer une date pour ce jour
-        const date = moment().day(index + 1);
-        console.log(`je log date : ${date}`);
-
-        // Vérifier si cette date existe déjà dans l'objet calendarData
-        const dateString = date.format("YYYY-MM-DD");
-        console.log(`je log datestring : ${dateString}`);
-
-        if (calendarData[dateString]) {
-          // Si la date existe, ajouter le titre à la liste existante
-          calendarData[dateString].push(parsedData[0].title);
-        } else {
-          // Sinon, créer une nouvelle liste pour cette date
-          calendarData[dateString] = [parsedData[0].title];
-          console.log(`je log calendardata après le else : ${calendarData}`);
-        }
-
-        
-      }
-      else {console.log('dans le else: pas de day, condition if marche pas')};
-    });
-    setAllAgendaDates(calendarData);
-    console.log(`je log calendarData : ${calendarData}`);
+    if (parsedData != null) {
+      const dataFromKeyOk = JSON.stringify(parsedData);
+      console.log("je log datafromkeyok : " + dataFromKeyOk);//je log datafromkeyok : [{"2023-03-06":["Workout"],"2023-03-07":["Workout"]}]
+      //transormation du tableau en in objet simple :
+      const objetFinal = Object.assign({}, parsedData[0]);
+      console.log("je log le tablo transformé en objet final : " + objetFinal);
+      // const habits = JSON.parse(data);
+      // setHabits(habits);
+      setAllAgendaDates(objetFinal);
+      console.log("datafromkey envoyé dans le state ");
+    } else {
+      console.log("parsedData égal null");
+    }
   };
 
   useEffect(() => {
