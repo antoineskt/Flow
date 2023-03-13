@@ -169,6 +169,7 @@ const AddHabitTwo = () => {
       console.log("pas de donné dans la clé");
       data = [];
       data.push(realDate);
+      await AsyncStorage.setItem("myKey", JSON.stringify(data));
       console.log("envoi de réelle date dans la cle");
       console.log(`voici le nv objet: ${JSON.stringify(realDate)}`);
       console.log(data);
@@ -201,17 +202,27 @@ const AddHabitTwo = () => {
                   `Adding title "${realDateTitles[j]}" for date ${date}`
                 );
                 obj[date].push(realDateTitles[j]);
+                await AsyncStorage.setItem("myKey", JSON.stringify(data));
+                
                 //realDate[date].push(realDateTitles[j]);
                 console.log("Le titre a été ajouté à la liste pour cette date");
               }
             }
+            // si il n'y a pas de date similaire dans les données, ajouter les nouvelles dates dans l'objet
           } else {
             console.log("pas de date similaire trouvée dans les données");
-            // La date n'existe pas encore, on ajoute la liste entière pour cette date
-            data.push({[date]: realDate[date]}); //crée un nouvel objet
-            console.log("ajout de la nouvelle realdate dans data");
+            // La date n'existe pas encore, on ajoute la liste entière pour cette date dans l'objet existant
+            // data = [{"2023-03-13":["Workout","Natation"],"2023-03-14":["Workout","Natation"]}]
+            // on transforme le tableau en objet simple :
+            const objetFinal = Object.assign({}, data[0]);
+
+            Object.assign(objetFinal, realDate); //assigne les propriétés de réeldata a data
+            console.log(JSON.stringify(objetFinal));
+            await AsyncStorage.setItem("myKey", JSON.stringify(objetFinal));
+            console.log(`maj de la clef réussie`);
+            
             //data[date] = realDate[date];
-          };
+          }
         }
       }
     }
@@ -219,8 +230,8 @@ const AddHabitTwo = () => {
     // Enregistrez les données mises à jour
     // Si data a été modifié, enregistrer les données mises à jour
 
-    await AsyncStorage.setItem("myKey", JSON.stringify(data));
-    console.log(`maj de la clef réussie`);
+    
+    
 
     setTitle("");
     setDaysOfWeek({

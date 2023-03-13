@@ -58,6 +58,7 @@ const HomePage = () => {
   const navigation = useNavigation();
 
  
+
   LocaleConfig.locales["fr"] = {
     monthNames: [
       "Janvier",
@@ -101,8 +102,6 @@ const HomePage = () => {
   };
   LocaleConfig.defaultLocale = "fr";
 
-
-
   const fetchData = async () => {
     console.log("log depuis fetchdata ");
     const data = await AsyncStorage.getItem("myKey");
@@ -114,14 +113,23 @@ const HomePage = () => {
 
     if (parsedData != null) {
       const dataFromKeyOk = JSON.stringify(parsedData);
-      console.log("je log datafromkeyok : " + dataFromKeyOk);//je log datafromkeyok : [{"2023-03-06":["Workout"],"2023-03-07":["Workout"]}]
-      //transormation du tableau en in objet simple :
-      const objetFinal = Object.assign({}, parsedData[0]);
-      console.log("je log le tablo transformé en objet final : " + objetFinal);
-      // const habits = JSON.parse(data);
-      // setHabits(habits);
-      setAllAgendaDates(objetFinal);
-      console.log("datafromkey envoyé dans le state ");
+      console.log("je log datafromkeyok : " + dataFromKeyOk); //je log datafromkeyok : [{"2023-03-06":["Workout"],"2023-03-07":["Workout"]}]
+      if (Array.isArray(parsedData)) {
+        //transormation du tableau en in objet simple :
+        const objetFinal = Object.assign({}, parsedData[0]);
+        console.log(
+          "je log le tablo transformé en objet final : " +
+            JSON.stringify(objetFinal)
+        );
+        // const habits = JSON.parse(data);
+        // setHabits(habits);
+        setAllAgendaDates(objetFinal);
+        console.log("objetfinal envoyé dans le state ");
+      } else {
+        console.log(parsedData);
+        setAllAgendaDates(parsedData);
+        console.log("objet validé, envoyé dans le state")
+      }
     } else {
       console.log("parsedData égal null");
     }
