@@ -8,76 +8,69 @@ import {
   TextInput,
   Platform,
   Button,
-} from "react-native";
+} from "react-native"
+import React, { useCallback, useEffect, useState } from "react"
+import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto"
+import { useNavigation } from "@react-navigation/native"
+import Header from "./components/Header"
+import Footer from "./components/Footer"
+import { Calendar, LocaleConfig } from "react-native-calendars"
 
-import React, { useCallback, useEffect, useState } from "react";
-
-import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto";
-
-import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
-
-import Icon from "react-native-vector-icons/FontAwesome";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { Calendar, LocaleConfig} from "react-native-calendars";
-
-LocaleConfig.locales['fr'] = {
+LocaleConfig.locales["fr"] = {
   monthNames: [
-    'Janvier',
-    'Février',
-    'Mars',
-    'Avril',
-    'Mai',
-    'Juin',
-    'Juillet',
-    'Août',
-    'Septembre',
-    'Octobre',
-    'Novembre',
-    'Décembre'
+    "Janvier",
+    "Février",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Août",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Décembre",
   ],
-  monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
-  dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-  dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
-  today: "Aujourd'hui"
-};
-LocaleConfig.defaultLocale = 'fr';
+  monthNamesShort: [
+    "Janv.",
+    "Févr.",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juil.",
+    "Août",
+    "Sept.",
+    "Oct.",
+    "Nov.",
+    "Déc.",
+  ],
+  dayNames: [
+    "Dimanche",
+    "Lundi",
+    "Mardi",
+    "Mercredi",
+    "Jeudi",
+    "Vendredi",
+    "Samedi",
+  ],
+  dayNamesShort: ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."],
+  today: "Aujourd'hui",
+}
+LocaleConfig.defaultLocale = "fr"
 
 const Stats = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
-  const [fontsLoaded] = useFonts({ Roboto_900Black });
+  const [fontsLoaded] = useFonts({ Roboto_900Black })
 
   if (!fontsLoaded) {
-    return null;
+    return null
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Icon.Button
-          name="user-plus"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("AddAFriend")}
-        ></Icon.Button>
-
-        <View style={styles.iconRight}>
-          <Icon.Button
-            name="user-circle"
-            color={"black"}
-            backgroundColor={"transparent"}
-            onPress={() => navigation.navigate("Profil")}
-          ></Icon.Button>
-
-          <Icon.Button
-            name="send"
-            color={"black"}
-            backgroundColor={"transparent"}
-            onPress={() => navigation.navigate("Messages")}
-          ></Icon.Button>
-        </View>
-      </View>
+      <Header />
 
       {/* <View style={styles.viewValidate}>
         <TouchableOpacity onPress={() => navigation.navigate("Homepage")}>
@@ -164,18 +157,16 @@ const Stats = () => {
           maxDate={"2023-12-31"}
           // Handler which gets executed on day press. Default = undefined
           onDayPress={(day) => {
-            console.log("selected day", day);
+            console.log("selected day", day)
           }}
           // Handler which gets executed on day long press. Default = undefined
           onDayLongPress={(day) => {
-            console.log("selected day", day);
+            console.log("selected day", day)
           }}
-          
           // Handler which gets executed when visible month changes in calendar. Default = undefined
           onMonthChange={(month) => {
-            console.log("month changed", month);
+            console.log("month changed", month)
           }}
-         
           // Do not show days of other months in month page. Default = false
           hideExtraDays={true}
           // If hideArrows = false and hideExtraDays = false do not switch month when tapping on greyed out
@@ -183,66 +174,19 @@ const Stats = () => {
           disableMonthChange={true}
           // If firstDay=1 week starts from Monday. Note that dayNames and dayNamesShort should still start from Sunday
           firstDay={1}
-
-          
         />
       </View>
 
-      <View style={styles.footer}>
-        <Icon.Button
-          name="home"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Homepage")}
-        ></Icon.Button>
-
-        <Icon.Button
-          name="bar-chart"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Stats")}
-        ></Icon.Button>
-
-        <TouchableOpacity onPress={() => navigation.navigate("AddHabitOne")}>
-          <LinearGradient colors={["#FF3B01", "#FACA21"]} style={styles.button}>
-            <Text style={styles.textbutton}>+</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        <Icon.Button
-          name="group"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("GroupFriends")}
-        ></Icon.Button>
-
-        <Icon.Button
-          name="gear"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Seetings")}
-        ></Icon.Button>
-      </View>
+      <Footer />
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     width: "100%",
     height: "100%",
-  },
-
-  header: {
-    width: "100%",
-    flexDirection: "row",
-    paddingTop: "5%",
-    justifyContent: "space-between",
-  },
-
-  iconRight: {
-    flexDirection: "row",
   },
 
   viewValidate: {
@@ -339,28 +283,6 @@ const styles = StyleSheet.create({
     boder: 1,
     borderColor: "#EDEDED",
   },
+})
 
-  footer: {
-    padding: "2%",
-
-    justifyContent: "space-between",
-
-    flexDirection: "row",
-    backgroundColor: "white",
-  },
-
-  button: {
-    borderRadius: 20,
-    height: 40,
-    width: 70,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  textbutton: {
-    color: "white",
-    fontSize: 25,
-  },
-});
-
-export default Stats;
+export default Stats

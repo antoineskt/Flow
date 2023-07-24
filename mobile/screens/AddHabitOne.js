@@ -9,56 +9,34 @@ import {
   Platform,
   Button,
   ScrollView,
-} from "react-native";
+} from "react-native"
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react"
 
-import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto";
+import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto"
 
-import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native"
+import { LinearGradient } from "expo-linear-gradient"
 
-import Icon from "react-native-vector-icons/FontAwesome";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/FontAwesome"
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5"
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
+import Ionicons from "react-native-vector-icons/Ionicons"
+import Footer from "./components/Footer"
+import Header from "./components/Header"
 
 const AddHabitOne = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
-  const [fontsLoaded] = useFonts({ Roboto_900Black });
+  const [fontsLoaded] = useFonts({ Roboto_900Black })
 
   if (!fontsLoaded) {
-    return null;
+    return null
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Icon.Button
-          name="user-plus"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("AddAFriend")}
-        ></Icon.Button>
-
-        <View style={styles.iconRight}>
-          <Icon.Button
-            name="user-circle"
-            color={"black"}
-            backgroundColor={"transparent"}
-            onPress={() => navigation.navigate("Profil")}
-          ></Icon.Button>
-
-          <Icon.Button
-            name="send"
-            color={"black"}
-            backgroundColor={"transparent"}
-            onPress={() => navigation.navigate("Messages")}
-          ></Icon.Button>
-        </View>
-        
-      </View>
+      <Header />
 
       <View
         style={{
@@ -67,7 +45,10 @@ const AddHabitOne = () => {
           paddingBottom: 10,
         }}
       >
-        <Text style={{fontFamily: "Roboto_900Black", fontSize: 18}}> AJOUTER UNE HABITUDE</Text>
+        <Text style={{ fontFamily: "Roboto_900Black", fontSize: 18 }}>
+          {" "}
+          AJOUTER UNE HABITUDE
+        </Text>
       </View>
 
       <View
@@ -77,13 +58,18 @@ const AddHabitOne = () => {
         }}
       />
 
-        <TouchableOpacity style={{flex: 1, justifyContent:  "center", paddingLeft: "6%"}} onPress={() => navigation.navigate("AddHabitTwo")}>
-          
-            <Text style={{fontFamily: "Roboto_900Black", textTransform: "uppercase"}}>Créer une habitude personnalisée</Text>
-          
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={{ flex: 1, justifyContent: "center", paddingLeft: "6%" }}
+        onPress={() => navigation.navigate("AddHabitTwo")}
+      >
+        <Text
+          style={{ fontFamily: "Roboto_900Black", textTransform: "uppercase" }}
+        >
+          Créer une habitude personnalisée
+        </Text>
+      </TouchableOpacity>
 
-        <View
+      <View
         style={{
           borderBottomColor: "black",
           borderBottomWidth: StyleSheet.hairlineWidth,
@@ -91,9 +77,16 @@ const AddHabitOne = () => {
       />
 
       <View style={styles.body}>
-        
         <ScrollView>
-          <Text style={{fontFamily: "Roboto_900Black", textTransform: "uppercase", marginBottom: "5%"}}>Ou utiliser un modèle :</Text>
+          <Text
+            style={{
+              fontFamily: "Roboto_900Black",
+              textTransform: "uppercase",
+              marginBottom: "5%",
+            }}
+          >
+            Ou utiliser un modèle :
+          </Text>
           <Text>SPORT</Text>
           <View>
             <FontAwesome5.Button
@@ -316,44 +309,10 @@ const AddHabitOne = () => {
         </ScrollView>
       </View>
 
-      <View style={styles.footer}>
-        <Icon.Button
-          name="home"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Homepage")}
-        ></Icon.Button>
-
-        <Icon.Button
-          name="bar-chart"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Stats")}
-        ></Icon.Button>
-
-        <TouchableOpacity onPress={() => navigation.navigate("AddHabitOne")}>
-          <LinearGradient colors={["#FF3B01", "#FACA21"]} style={styles.button}>
-            <Text style={styles.textbutton}>+</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        <Icon.Button
-          name="group"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("GroupFriends")}
-        ></Icon.Button>
-
-        <Icon.Button
-          name="gear"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Seetings")}
-        ></Icon.Button>
-      </View>
+      <Footer />
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -361,20 +320,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     flex: 1,
-  },
-
-  header: {
-    width: "100%",
-    flexDirection: "row",
-    
-    paddingTop: "5%",
-    justifyContent: "space-between",
-    
-   
-  },
-
-  iconRight: {
-    flexDirection: "row",
   },
 
   inscription: {
@@ -412,29 +357,6 @@ const styles = StyleSheet.create({
     boder: 1,
     borderColor: "#EDEDED",
   },
+})
 
-  footer: {
-   
-    padding: "2%",
-
-    justifyContent: "space-between",
-
-    flexDirection: "row",
-    backgroundColor: "white",
-  },
-
-  button: {
-    borderRadius: 20,
-    height: 40,
-    width: 70,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  textbutton: {
-    color: "white",
-    fontSize: 25,
-  },
-});
-
-export default AddHabitOne;
+export default AddHabitOne

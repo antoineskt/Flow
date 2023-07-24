@@ -1,49 +1,21 @@
-import {
-  ImageBackground,
-  Image,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Platform,
-  Button,
-  FlatList,
-  ActivityIndicator,
-  SafeAreaView,
-} from "react-native";
-
-import React, { useEffect, useState } from "react";
-
-import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto";
-
-import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
-
-import Icon from "react-native-vector-icons/FontAwesome";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Card } from "@rneui/themed";
-import {
-  Agenda,
-  Calendar,
-  calendarTheme,
-  MyCustomList,
-  WeekCalendar,
-  ExpandableCalendar,
-  LocaleConfig,
-} from "react-native-calendars";
-import { generateEventsForWeek } from "./components/generateEventsForWeek";
-import moment from "moment";
+import { View, Text, StyleSheet, Platform, SafeAreaView } from "react-native"
+import React, { useEffect, useState } from "react"
+import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto"
+import { useNavigation } from "@react-navigation/native"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { Card } from "@rneui/themed"
+import { Agenda, LocaleConfig } from "react-native-calendars"
+import Footer from "./components/Footer"
+import Header from "./components/Header"
 
 const API_URL =
-  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
+  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000"
 
 const HomePage = () => {
   //const [habits, setHabits] = useState(allAgendaDates);
-  const [isLoading, setLoading] = useState(true);
-  const [itemsForSelectedDay, setItemsForSelectedDay] = useState({});
-  const [allAgendaDates, setAllAgendaDates] = useState({});
+  const [isLoading, setLoading] = useState(true)
+  const [itemsForSelectedDay, setItemsForSelectedDay] = useState({})
+  const [allAgendaDates, setAllAgendaDates] = useState({})
   // const allAgendaDates = {
   //   "2023-03-07": ["workout", "natation"],
   //   "2023-03-08": ["swimming", "clope"],
@@ -52,12 +24,10 @@ const HomePage = () => {
 
   //recup date du jour
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().slice(0, 10)
-  );
+    new Date().toISOString().slice(0, 10),
+  )
 
-  const navigation = useNavigation();
-
- 
+  const navigation = useNavigation()
 
   LocaleConfig.locales["fr"] = {
     monthNames: [
@@ -99,53 +69,53 @@ const HomePage = () => {
     ],
     dayNamesShort: ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."],
     today: "Aujourd'hui",
-  };
-  LocaleConfig.defaultLocale = "fr";
+  }
+  LocaleConfig.defaultLocale = "fr"
 
   const fetchData = async () => {
-    console.log("log depuis fetchdata ");
-    const data = await AsyncStorage.getItem("myKey");
-    const parsedData = JSON.parse(data);
-    console.log(`je log paresedData : ${parsedData}`); //[object, object]
-    console.log(JSON.stringify(parsedData)); // [{"title":["Workout "],"trueDays":["Mardi","Mercredi"]}]
+    console.log("log depuis fetchdata ")
+    const data = await AsyncStorage.getItem("myKey")
+    const parsedData = JSON.parse(data)
+    console.log(`je log paresedData : ${parsedData}`) //[object, object]
+    console.log(JSON.stringify(parsedData)) // [{"title":["Workout "],"trueDays":["Mardi","Mercredi"]}]
 
-    setLoading(false);
+    setLoading(false)
 
     if (parsedData != null) {
-      const dataFromKeyOk = JSON.stringify(parsedData);
-      console.log("je log datafromkeyok : " + dataFromKeyOk); //je log datafromkeyok : [{"2023-03-06":["Workout"],"2023-03-07":["Workout"]}]
+      const dataFromKeyOk = JSON.stringify(parsedData)
+      console.log("je log datafromkeyok : " + dataFromKeyOk) //je log datafromkeyok : [{"2023-03-06":["Workout"],"2023-03-07":["Workout"]}]
       if (Array.isArray(parsedData)) {
         //transormation du tableau en in objet simple :
-        const objetFinal = Object.assign({}, parsedData[0]);
+        const objetFinal = Object.assign({}, parsedData[0])
         console.log(
           "je log le tablo transformé en objet final : " +
-            JSON.stringify(objetFinal)
-        );
+            JSON.stringify(objetFinal),
+        )
         // const habits = JSON.parse(data);
         // setHabits(habits);
-        setAllAgendaDates(objetFinal);
-        console.log("objetfinal envoyé dans le state ");
+        setAllAgendaDates(objetFinal)
+        console.log("objetfinal envoyé dans le state ")
       } else {
-        console.log(parsedData);
-        setAllAgendaDates(parsedData);
+        console.log(parsedData)
+        setAllAgendaDates(parsedData)
         console.log("objet validé, envoyé dans le state")
       }
     } else {
-      console.log("parsedData égal null");
+      console.log("parsedData égal null")
     }
-  };
+  }
 
   useEffect(() => {
     //permet l'actualisation de la page avec les nouvelles données
-    const unsubscribe = navigation.addListener("focus", fetchData);
+    const unsubscribe = navigation.addListener("focus", fetchData)
 
-    return unsubscribe;
-  }, []);
+    return unsubscribe
+  }, [])
 
-  const [fontsLoaded] = useFonts({ Roboto_900Black });
+  const [fontsLoaded] = useFonts({ Roboto_900Black })
 
   if (!fontsLoaded) {
-    return null;
+    return null
   }
 
   function renderCard({ item }) {
@@ -156,33 +126,33 @@ const HomePage = () => {
           {item.goals}
         </Card.Title>
       </Card>
-    );
+    )
   }
 
-  console.log("homepage actualisé");
+  console.log("homepage actualisé")
 
   const getMarkedDates = () => {
-    let markedDates = {};
+    let markedDates = {}
     Object.keys(allAgendaDates).map((date) => {
       //console.log(date);
       markedDates[date] = {
         marked: true,
-      };
-    });
+      }
+    })
     //console.log(markedDates);
-    return markedDates;
-  };
+    return markedDates
+  }
 
   //on récupérer la date cliquée quand on clique(onclick=onUpdate) qu'on passe en propriété
   const onUpdateSelectedDate = (date) => {
-    const recupDateCorrespondante = allAgendaDates[date.dateString]; //recup le titre qui correspond a la date
-    console.log("log de recupDate : " + recupDateCorrespondante); //undefined
+    const recupDateCorrespondante = allAgendaDates[date.dateString] //recup le titre qui correspond a la date
+    console.log("log de recupDate : " + recupDateCorrespondante) //undefined
 
     const updatedItemsForSelectedDay = {
       [date.dateString]: recupDateCorrespondante,
-    };
-    console.log(updatedItemsForSelectedDay); // {"2023-03-XX": undefined}
-    setItemsForSelectedDay(updatedItemsForSelectedDay);
+    }
+    console.log(updatedItemsForSelectedDay) // {"2023-03-XX": undefined}
+    setItemsForSelectedDay(updatedItemsForSelectedDay)
 
     // const eventsForDate = allAgendaDates[date.dateString]; //on recupére la date correspondante cliquée
 
@@ -200,34 +170,11 @@ const HomePage = () => {
     // } else {
     //   console.log("pas de data");
     // }
-  };
+  }
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Icon.Button
-          name="user-plus"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("AddAFriend")}
-        ></Icon.Button>
-
-        <View style={styles.iconRight}>
-          <Icon.Button
-            name="user-circle"
-            color={"black"}
-            backgroundColor={"transparent"}
-            onPress={() => navigation.navigate("Profil")}
-          ></Icon.Button>
-
-          <Icon.Button
-            name="send"
-            color={"black"}
-            backgroundColor={"transparent"}
-            onPress={() => navigation.navigate("Messages")}
-          ></Icon.Button>
-        </View>
-      </View>
+      <Header />
 
       <SafeAreaView style={{ flex: 20 }}>
         <Agenda
@@ -241,12 +188,12 @@ const HomePage = () => {
           renderItem={(item) => <Text></Text>}
           // Specify how each date should be rendered. day can be undefined if the item is not first in that day
           renderDay={(day, item) => {
-            return <View>{item && <Text>{item}</Text>}</View>;
+            return <View>{item && <Text>{item}</Text>}</View>
           }}
           hideKnob={true} //cache la fleche qui permet d'ouvrir l'ensemble du calendrier/>
           // Specify what should be rendered instead of ActivityIndicator
           renderEmptyData={() => {
-            return <View />;
+            return <View />
           }}
         />
       </SafeAreaView>
@@ -260,43 +207,10 @@ const HomePage = () => {
         />
       </View> */}
 
-      <View style={styles.footer}>
-        <Icon.Button
-          name="home"
-          color={"black"}
-          backgroundColor={"transparent"}
-        ></Icon.Button>
-
-        <Icon.Button
-          name="bar-chart"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Stats")}
-        ></Icon.Button>
-
-        <TouchableOpacity onPress={() => navigation.navigate("AddHabitOne")}>
-          <LinearGradient colors={["#FF3B01", "#FACA21"]} style={styles.button}>
-            <Text style={styles.textbutton}>+</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        <Icon.Button
-          name="group"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("GroupFriends")}
-        ></Icon.Button>
-
-        <Icon.Button
-          name="gear"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Seetings")}
-        ></Icon.Button>
-      </View>
+      <Footer />
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -400,26 +314,6 @@ const styles = StyleSheet.create({
     boder: 1,
     borderColor: "#EDEDED",
   },
+})
 
-  footer: {
-    padding: "2%",
-    justifyContent: "space-between",
-    flexDirection: "row",
-    backgroundColor: "white",
-  },
-
-  button: {
-    borderRadius: 20,
-    height: 40,
-    width: 70,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  textbutton: {
-    color: "white",
-    fontSize: 25,
-  },
-});
-
-export default HomePage;
+export default HomePage

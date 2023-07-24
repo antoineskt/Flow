@@ -9,36 +9,30 @@ import {
   Platform,
   Button,
   FlatList,
-} from "react-native";
+} from "react-native"
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react"
 
 import {
   useFonts,
   Roboto_900Black,
   Roboto_400Regular,
-} from "@expo-google-fonts/roboto";
+} from "@expo-google-fonts/roboto"
 
-import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "@react-navigation/native"
+import { LinearGradient } from "expo-linear-gradient"
 
-import Icon from "react-native-vector-icons/FontAwesome";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import Checkbox from "expo-checkbox";
-import {
-  Agenda,
-  Calendar,
-  calendarTheme,
-  MyCustomList,
-  WeekCalendar,
-  ExpandableCalendar,
-  LocaleConfig,
-} from "react-native-calendars";
-import moment from "moment";
+import Icon from "react-native-vector-icons/FontAwesome"
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import Checkbox from "expo-checkbox"
+import { LocaleConfig } from "react-native-calendars"
+import moment from "moment"
+import Footer from "./components/Footer"
+import Header from "./components/Header"
 
 const AddHabitTwo = () => {
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState("")
 
   const [daysOfWeek, setDaysOfWeek] = useState({
     Lundi: false,
@@ -48,19 +42,19 @@ const AddHabitTwo = () => {
     Vendredi: false,
     Samedi: false,
     Dimanche: false,
-  });
+  })
 
-  const [isError, setIsError] = useState(false);
-  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false)
+  const [message, setMessage] = useState("")
 
-  const [isChecked, setChecked] = useState(false);
+  const [isChecked, setChecked] = useState(false)
 
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
-  const [fontsLoaded] = useFonts({ Roboto_900Black, Roboto_400Regular });
+  const [fontsLoaded] = useFonts({ Roboto_900Black, Roboto_400Regular })
 
   if (!fontsLoaded) {
-    return null;
+    return null
   }
 
   LocaleConfig.locales["fr"] = {
@@ -103,23 +97,23 @@ const AddHabitTwo = () => {
     ],
     dayNamesShort: ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."],
     today: "Aujourd'hui",
-  };
-  LocaleConfig.defaultLocale = "fr";
+  }
+  LocaleConfig.defaultLocale = "fr"
 
   //ENREGISTREMENT DES DONNES DANS ASYNCSTORAGE
   const saveData = async () => {
     //on trie que les jours selectionnés (true)
-    const trueDays = Object.keys(daysOfWeek).filter((day) => daysOfWeek[day]);
-    console.log(`je log truedays : ${trueDays}`); //lundi mardi
-    console.log(`je log title : ${title}`);
+    const trueDays = Object.keys(daysOfWeek).filter((day) => daysOfWeek[day])
+    console.log(`je log truedays : ${trueDays}`) //lundi mardi
+    console.log(`je log title : ${title}`)
 
     //ici on a juste des truedays et title on peut transormer le truedays en date réelle
 
     // Initialiser un objet pour stocker les dates et les titres
-    const realDate = {};
+    const realDate = {}
 
     // Parcourir les jours de la semaine
-    [
+    ;[
       "Lundi",
       "Mardi",
       "Mercredi",
@@ -131,97 +125,168 @@ const AddHabitTwo = () => {
       // Vérifier si le jour est sélectionné par l'utilisateur
       if (trueDays.includes(day)) {
         console.log(
-          "le if parsedata fonctionne, inclut donc un jour de la semaine"
-        );
+          "le if parsedata fonctionne, inclut donc un jour de la semaine",
+        )
         // Créer une date pour ce jour
-        const date = moment().day(index + 1);
-        console.log(`Création de la date, je log date : ${date}`);
+        const date = moment().day(index + 1)
+        console.log(`Création de la date, je log date : ${date}`)
 
         //mise au bon format
-        const dateString = date.format("YYYY-MM-DD");
-        console.log(
-          `Création du bon format, je log datestring : ${dateString}`
-        );
+        const dateString = date.format("YYYY-MM-DD")
+        console.log(`Création du bon format, je log datestring : ${dateString}`)
 
         //créer d'une nouvelle liste pour cette date sous la bonne forme
-        realDate[dateString] = [title];
-        console.log("création du nouvel objet au bon format réussi");
+        realDate[dateString] = [title]
+        console.log("création du nouvel objet realDate au bon format réussi")
         console.log(
           `je log le nouvel objet fraichment crée realDate : ${JSON.stringify(
-            realDate
-          )}`
-        );
+            realDate,
+          )}`,
+        )
       }
-    });
+    })
     console.log(
-      "Fin du formatage complet des nouvelles données avec les dates et titres"
-    );
+      "Fin du formatage complet des nouvelles données avec les dates et titres (realDate)",
+    )
 
     // Récupère les données actuelles de la clé "myKey"
-    const currentData = await AsyncStorage.getItem("myKey");
+    const currentData = await AsyncStorage.getItem("myKey")
     // Parse les données JSON
-    let data = JSON.parse(currentData);
-    let dataInKey = JSON.stringify(data);
-    console.log("log de dataInKey : " + dataInKey);
+    let data = JSON.parse(currentData)
+    let dataInKey = JSON.stringify(data)
+    console.log("log de dataInKey : " + dataInKey)
 
     // si il n'y a pas de donnée dans la clef async on crée un nouvel objet
     if (!data) {
-      console.log("pas de donné dans la clé");
-      data = [];
-      data.push(realDate);
-      await AsyncStorage.setItem("myKey", JSON.stringify(data));
-      console.log("envoi de réelle date dans la cle");
-      console.log(`voici le nv objet: ${JSON.stringify(realDate)}`);
-      console.log(data);
+      console.log("pas de donné dans la clé")
+      data = []
+      data.push(realDate)
+      await AsyncStorage.setItem("myKey", JSON.stringify(data))
+      console.log("envoi de réelle date dans la cle")
+      console.log(`voici le nv objet: ${JSON.stringify(realDate)}`)
+      console.log(data)
     } else {
       // si il y a deja des données
-      console.log("il y a deja des donnée(data) dans la cle");
+      console.log("il y a deja des donnée(data) dans la cle")
 
       // vérifier si une date similaire existe deja :
       // Parcourir toutes les propriétés de l'objet
       for (let date in realDate) {
-        console.log("vérification si une date est similaire dans nos données");
-        for (let i = 0; i < data.length; i++) {
-          const obj = data[i];
-          // check if there is a similar date
-          if (obj.hasOwnProperty(date)) {
-            console.log(`IL y a une date similaire qui est ${date}`);
+        console.log("vérification si une date est similaire dans nos données")
+        //console.log(date); // 2023-03-15
+        console.log(realDate) //{"2023-03-15": ["Natation"]}
+        //console.log(data.length); // 1  ---> undefined
+        //console.log(data);
 
-            // check if the title for this date already exists in realDate
-            const realDateTitles = realDate[date];
-            const dataTitles = obj[date];
-            for (let j = 0; j < realDateTitles.length; j++) {
-              if (dataTitles.includes(realDateTitles[j])) {
-                console.log(
-                  `Title "${realDateTitles[j]}" already exists for date ${date}`
-                );
-              } else {
-                //ajouter le titre à la liste pour cette date
-                //data[date].push(title);
-                console.log(
-                  `Adding title "${realDateTitles[j]}" for date ${date}`
-                );
-                obj[date].push(realDateTitles[j]);
-                await AsyncStorage.setItem("myKey", JSON.stringify(data));
-                
-                //realDate[date].push(realDateTitles[j]);
-                console.log("Le titre a été ajouté à la liste pour cette date");
+        //VERIF DES BON FORMATS TABLEAU OBJET POUR EVITER LES BUGS
+        if (Array.isArray(data)) {
+          console.log("c'est un tableau")
+          for (let i = 0; i < data.length; i++) {
+            const obj = data[i]
+            console.log(
+              "creation de l'objet avec les dates pour avoir le bon type objet",
+            )
+            //console.log(date[i]); // 2
+            console.log("je log le tableau transormé en objet :" + obj) //{"2023-03-13": ["Workout"], "2023-03-14": ["Workout"]}
+            // check if there is a similar date
+            if (obj.hasOwnProperty(date)) {
+              console.log(`cette date : ${date} est deja dans les données`)
+
+              // check if the title for this date already exists in realDate
+              const realDateTitles = realDate[date]
+              const dataTitles = obj[date]
+              for (let j = 0; j < realDateTitles.length; j++) {
+                if (dataTitles.includes(realDateTitles[j])) {
+                  console.log(
+                    `Title "${realDateTitles[j]}" already exists for date ${date}`,
+                  )
+                } else {
+                  //ajouter le titre à la liste pour cette date
+                  //data[date].push(title);
+                  console.log(
+                    `Adding title "${realDateTitles[j]}" for date ${date}`,
+                  )
+                  obj[date].push(realDateTitles[j])
+                  await AsyncStorage.setItem("myKey", JSON.stringify(data))
+
+                  //realDate[date].push(realDateTitles[j]);
+                  console.log(
+                    "Le titre a été ajouté à la liste pour cette date",
+                  )
+                }
               }
-            }
-            // si il n'y a pas de date similaire dans les données, ajouter les nouvelles dates dans l'objet
-          } else {
-            console.log("pas de date similaire trouvée dans les données");
-            // La date n'existe pas encore, on ajoute la liste entière pour cette date dans l'objet existant
-            // data = [{"2023-03-13":["Workout","Natation"],"2023-03-14":["Workout","Natation"]}]
-            // on transforme le tableau en objet simple :
-            const objetFinal = Object.assign({}, data[0]);
+              // si il n'y a pas de date similaire dans les données, ajouter les nouvelles dates dans l'objet
+            } else {
+              console.log(`cette date : ${date} n'est pas dans les données`)
+              // La date n'existe pas encore, on ajoute la liste entière pour cette date dans l'objet existant
+              // data = [{"2023-03-13":["Workout","Natation"],"2023-03-14":["Workout","Natation"]}]
+              // on transforme le tableau en objet simple :
+              const objetFinal = Object.assign({}, data[0])
 
-            Object.assign(objetFinal, realDate); //assigne les propriétés de réeldata a data
-            console.log(JSON.stringify(objetFinal));
-            await AsyncStorage.setItem("myKey", JSON.stringify(objetFinal));
-            console.log(`maj de la clef réussie`);
-            
-            //data[date] = realDate[date];
+              Object.assign(objetFinal, realDate) //assigne les propriétés de réeldata a data
+              console.log(JSON.stringify(objetFinal))
+
+              //on le remet sous forme de tableau pour qu'il soit lisible par les itérations for
+              await AsyncStorage.setItem("myKey", JSON.stringify(objetFinal))
+              console.log(`maj de la clef réussie`)
+
+              //data[date] = realDate[date];
+            }
+          }
+        } else {
+          console.log("c'est un objet")
+          const longueur = Object.keys(data).length
+          console.log(longueur)
+          for (let i = 0; i < Object.keys(data).length; i++) {
+            //const obj = data[i];
+            console.log("creation de l'objet avec les dates")
+
+            console.log(data[i]) // 2
+            //console.log(obj); //{"2023-03-13": ["Workout"], "2023-03-14": ["Workout"]}
+            // check if there is a similar date
+            if (data.hasOwnProperty(date)) {
+              console.log(`cette date : ${date} est deja dans les données`)
+
+              // check if the title for this date already exists in realDate
+              const realDateTitles = realDate[date]
+              const dataTitles = data[date]
+              for (let j = 0; j < realDateTitles.length; j++) {
+                if (dataTitles.includes(realDateTitles[j])) {
+                  console.log(
+                    `Title "${realDateTitles[j]}" already exists for date ${date}`,
+                  )
+                } else {
+                  //ajouter le titre à la liste pour cette date
+                  //data[date].push(title);
+                  console.log(
+                    `Adding title "${realDateTitles[j]}" for date ${date}`,
+                  )
+                  data[date].push(realDateTitles[j])
+                  await AsyncStorage.setItem("myKey", JSON.stringify(data))
+
+                  //realDate[date].push(realDateTitles[j]);
+                  console.log(
+                    "Le titre a été ajouté à la liste pour cette date",
+                  )
+                }
+              }
+              // si il n'y a pas de date similaire dans les données, ajouter les nouvelles dates dans l'objet
+            } else {
+              console.log("cette date n'a pas été trouvée dans les données")
+              // La date n'existe pas encore, on ajoute la liste entière pour cette date dans l'objet existant
+              // data = [{"2023-03-13":["Workout","Natation"],"2023-03-14":["Workout","Natation"]}]
+              // on transforme le tableau en objet simple :
+              //const objetFinal = Object.assign({}, data[0]);
+
+              Object.assign(data, realDate) //assigne les propriétés de réeldata a data
+              console.log(JSON.stringify(data))
+
+              //on le remet sous forme de tableau pour qu'il soit lisible par les itérations for
+              await AsyncStorage.setItem("myKey", JSON.stringify(data))
+              console.log(`maj de la clef réussie`)
+
+              //data[date] = realDate[date];
+            }
           }
         }
       }
@@ -229,11 +294,9 @@ const AddHabitTwo = () => {
 
     // Enregistrez les données mises à jour
     // Si data a été modifié, enregistrer les données mises à jour
+    console.log("go to homepage")
 
-    
-    
-
-    setTitle("");
+    setTitle("")
     setDaysOfWeek({
       Lundi: false,
       Mardi: false,
@@ -242,37 +305,13 @@ const AddHabitTwo = () => {
       Vendredi: false,
       Samedi: false,
       Dimanche: false,
-    });
-    navigation.navigate("Homepage");
-  };
+    })
+    //navigation.navigate("Homepage");
+  }
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Icon.Button
-          name="user-plus"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("AddAFriend")}
-        ></Icon.Button>
-
-        <View style={styles.iconRight}>
-          <Icon.Button
-            name="user-circle"
-            color={"black"}
-            backgroundColor={"transparent"}
-            onPress={() => navigation.navigate("Profil")}
-          ></Icon.Button>
-
-          <Icon.Button
-            name="send"
-            color={"black"}
-            backgroundColor={"transparent"}
-            onPress={() => navigation.navigate("Messages")}
-          ></Icon.Button>
-        </View>
-      </View>
-
+      <Header />
       <View style={styles.secondHeader}>
         <Text style={styles.textSecondheader}> AJOUTER UNE HABITUDE</Text>
       </View>
@@ -393,62 +432,16 @@ const AddHabitTwo = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.footer}>
-        <Icon.Button
-          name="home"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Homepage")}
-        ></Icon.Button>
-
-        <Icon.Button
-          name="bar-chart"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Stats")}
-        ></Icon.Button>
-
-        <TouchableOpacity onPress={() => navigation.navigate("AddHabitOne")}>
-          <LinearGradient colors={["#FF3B01", "#FACA21"]} style={styles.button}>
-            <Text style={styles.textbutton}>+</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-
-        <Icon.Button
-          name="group"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("GroupFriends")}
-        ></Icon.Button>
-
-        <Icon.Button
-          name="gear"
-          color={"black"}
-          backgroundColor={"transparent"}
-          onPress={() => navigation.navigate("Seetings")}
-        ></Icon.Button>
-      </View>
+      <Footer />
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     width: "100%",
     height: "100%",
-  },
-
-  header: {
-    width: "100%",
-    flexDirection: "row",
-
-    paddingTop: "5%",
-    justifyContent: "space-between",
-  },
-
-  iconRight: {
-    flexDirection: "row",
   },
 
   secondHeader: {
@@ -521,26 +514,6 @@ const styles = StyleSheet.create({
 
     alignSelf: "center",
   },
+})
 
-  footer: {
-    padding: "2%",
-    justifyContent: "space-between",
-    flexDirection: "row",
-    backgroundColor: "white",
-  },
-
-  button: {
-    borderRadius: 20,
-    height: 40,
-    width: 70,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  textbutton: {
-    color: "white",
-    fontSize: 25,
-  },
-});
-
-export default AddHabitTwo;
+export default AddHabitTwo
