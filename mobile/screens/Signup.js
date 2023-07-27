@@ -1,6 +1,4 @@
 import {
-  ImageBackground,
-  Image,
   View,
   Text,
   StyleSheet,
@@ -8,26 +6,24 @@ import {
   TextInput,
   Platform,
   Button,
-} from "react-native";
-
-import React, { useCallback, useEffect, useState } from "react";
-
-import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto";
-import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
+} from "react-native"
+import React, { useState } from "react"
+import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto"
+import { useNavigation } from "@react-navigation/native"
+import { LinearGradient } from "expo-linear-gradient"
 
 const API_URL =
-  Platform.OS === "ios" ? "http://192.168.137.1" : "http://10.0.2.2:5000";
+  Platform.OS === "ios" ? "http://192.168.137.1" : "http://10.0.2.2:5000"
 
 const Signup = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
-  const [isError, setIsError] = useState(false);
-  const [message, setMessage] = useState("");
+  const [isError, setIsError] = useState(false)
+  const [message, setMessage] = useState("")
 
-  const navigation = useNavigation();
+  const navigation = useNavigation()
 
   //on poste les datas
   const onSubmitHandler = () => {
@@ -35,7 +31,7 @@ const Signup = () => {
       email,
       name,
       password,
-    };
+    }
     fetch(`${API_URL}/${"signup"}`, {
       method: "POST",
       headers: {
@@ -45,23 +41,23 @@ const Signup = () => {
     })
       .then(async (res) => {
         try {
-          const jsonRes = await res.json();
+          const jsonRes = await res.json()
           if (res.status !== 200) {
-            setIsError(true);
-            setMessage(jsonRes.message);
+            setIsError(true)
+            setMessage(jsonRes.message)
           } else {
-            onLoggedIn(jsonRes.token);
-            setIsError(false);
-            setMessage(jsonRes.message);
+            onLoggedIn(jsonRes.token)
+            setIsError(false)
+            setMessage(jsonRes.message)
           }
         } catch (err) {
-          console.log(err);
+          console.log(err)
         }
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   //on récupére le token
   const onLoggedIn = (token) => {
@@ -74,33 +70,30 @@ const Signup = () => {
     })
       .then(async (res) => {
         try {
-          const jsonRes = await res.json();
+          const jsonRes = await res.json()
           if (res.status === 200) {
-            setMessage(jsonRes.message);
+            setMessage(jsonRes.message)
           }
-          
         } catch (err) {
-          console.log(err);
-        }
-
-        finally {
+          console.log(err)
+        } finally {
           navigation.navigate("Homepage")
         }
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   const getMessage = () => {
-    const status = isError ? `Error: ` : `Success: `;
-    return status + message;
-  };
+    const status = isError ? `Error: ` : `Success: `
+    return status + message
+  }
 
-  const [fontsLoaded] = useFonts({ Roboto_900Black });
+  const [fontsLoaded] = useFonts({ Roboto_900Black })
 
   if (!fontsLoaded) {
-    return null;
+    return null
   }
 
   return (
@@ -165,8 +158,8 @@ const Signup = () => {
         </TouchableOpacity>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -248,6 +241,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: "5%",
   },
-});
+})
 
-export default Signup;
+export default Signup

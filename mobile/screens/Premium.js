@@ -1,29 +1,13 @@
-import {
-  ImageBackground,
-  Image,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Platform,
-  Button,
-} from "react-native"
-
-import React, { useCallback, useEffect, useState } from "react"
+import { Image, View, Text, StyleSheet, TouchableOpacity } from "react-native"
+import React from "react"
 import logonoirsmall from "../assets/logonoirsmall.png"
-
 import {
   useFonts,
   Roboto_900Black,
   Roboto_400Regular,
 } from "@expo-google-fonts/roboto"
-
 import { useNavigation } from "@react-navigation/native"
 import { LinearGradient } from "expo-linear-gradient"
-
-import Icon from "react-native-vector-icons/FontAwesome"
-
 import Footer from "./components/Footer"
 import Header from "./components/Header"
 

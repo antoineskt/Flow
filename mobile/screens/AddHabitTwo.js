@@ -1,29 +1,18 @@
 import {
-  ImageBackground,
-  Image,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Platform,
-  Button,
-  FlatList,
 } from "react-native"
-
-import React, { useCallback, useEffect, useState } from "react"
-
+import React, { useState } from "react"
 import {
   useFonts,
   Roboto_900Black,
   Roboto_400Regular,
 } from "@expo-google-fonts/roboto"
-
 import { useNavigation } from "@react-navigation/native"
 import { LinearGradient } from "expo-linear-gradient"
-
-import Icon from "react-native-vector-icons/FontAwesome"
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import Checkbox from "expo-checkbox"
 import { LocaleConfig } from "react-native-calendars"

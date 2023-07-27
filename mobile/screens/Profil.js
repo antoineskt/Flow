@@ -1,27 +1,18 @@
 import {
-  ImageBackground,
-  Image,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Platform,
-  Button,
 } from "react-native"
-
-import React, { useCallback, useEffect, useState } from "react"
-
+import React from "react"
 import {
   useFonts,
   Roboto_900Black,
   Roboto_400Regular,
 } from "@expo-google-fonts/roboto"
-
 import { useNavigation } from "@react-navigation/native"
 import { LinearGradient } from "expo-linear-gradient"
-
-import Icon from "react-native-vector-icons/FontAwesome"
 import Header from "./components/Header"
 import Footer from "./components/Footer"
 

@@ -8,49 +8,37 @@ import {
   TextInput,
   Platform,
   Button,
-} from "react-native";
+} from "react-native"
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react"
 
-import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto";
-import { useNavigation } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
+import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto"
+import { useNavigation } from "@react-navigation/native"
+import { LinearGradient } from "expo-linear-gradient"
 
 const API_URL =
-  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000";
+  Platform.OS === "ios" ? "http://192.168.1.18:5000" : "http://10.0.2.2:5000"
 
 const Login = () => {
+  const navigation = useNavigation()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
-  const navigation = useNavigation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
- 
+  const [isError, setIsError] = useState(false)
+  const [message, setMessage] = useState("")
 
-  // de base, state sans erreur
-  
-  const [isError, setIsError] = useState(false);
-  const [message, setMessage] = useState("");
-  
-
-
-  const [fontsLoaded] = useFonts({ Roboto_900Black });
+  const [fontsLoaded] = useFonts({ Roboto_900Black })
 
   if (!fontsLoaded) {
-    return null;
+    return null
   }
-
-
-
-  // de base on est en Login true
-
-  
 
   const onSubmitHandler = () => {
     const payload = {
       email,
       password,
-    };
-    fetch(`${API_URL}/${'login'}`, {
+    }
+    fetch(`${API_URL}/${"login"}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,23 +47,23 @@ const Login = () => {
     })
       .then(async (res) => {
         try {
-          const jsonRes = await res.json();
+          const jsonRes = await res.json()
           if (res.status !== 200) {
-            setIsError(true);
-            setMessage(jsonRes.message);
+            setIsError(true)
+            setMessage(jsonRes.message)
           } else {
-            onLoggedIn(jsonRes.token);
-            setIsError(false);
-            setMessage(jsonRes.message);
+            onLoggedIn(jsonRes.token)
+            setIsError(false)
+            setMessage(jsonRes.message)
           }
         } catch (err) {
-          console.log(err);
+          console.log(err)
         }
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   //on récupére le token
   const onLoggedIn = (token) => {
@@ -88,32 +76,30 @@ const Login = () => {
     })
       .then(async (res) => {
         try {
-          const jsonRes = await res.json();
+          const jsonRes = await res.json()
           if (res.status === 200) {
-            setMessage(jsonRes.message);
+            setMessage(jsonRes.message)
           }
         } catch (err) {
-          console.log(err);
+          console.log(err)
         } finally {
-          navigation.navigate("Homepage");
+          navigation.navigate("Homepage")
         }
       })
       .catch((err) => {
-        console.log(err);
-      });
-  };
+        console.log(err)
+      })
+  }
 
   const getMessage = () => {
-    const status = isError ? `Error: ` : `Success: `;
-    return status + message;
-  };
+    const status = isError ? `Error: ` : `Success: `
+    return status + message
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.inscription}> SE CONNECTER </Text>
-
-      
       </View>
 
       <View style={styles.body}>
@@ -132,8 +118,6 @@ const Login = () => {
           style={styles.input}
           onChangeText={setPassword}
         ></TextInput>
-
-       
       </View>
 
       <View style={styles.footer}>
@@ -149,11 +133,13 @@ const Login = () => {
           </LinearGradient>
         </TouchableOpacity>
       </View>
-      <Button  title = "go to homepage" onPress={() => navigation.navigate("Homepage")}></Button>
+      <Button
+        title="go to homepage"
+        onPress={() => navigation.navigate("Homepage")}
+      ></Button>
     </View>
-    
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -235,6 +221,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: "5%",
   },
-});
+})
 
-export default Login;
+export default Login

@@ -6,9 +6,7 @@ import {
   TextInput,
   ScrollView,
 } from "react-native"
-
-import React, { useCallback, useEffect, useState } from "react"
-
+import React from "react"
 import {
   useFonts,
   Roboto_900Black,

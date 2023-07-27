@@ -1,15 +1,5 @@
-import {
-  ImageBackground,
-  Image,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Platform,
-  Button,
-} from "react-native"
-import React, { useCallback, useEffect, useState } from "react"
+import { View, Text, StyleSheet } from "react-native"
+import React from "react"
 import { useFonts, Roboto_900Black } from "@expo-google-fonts/roboto"
 import { useNavigation } from "@react-navigation/native"
 import Header from "./components/Header"
